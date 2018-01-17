@@ -1,8 +1,8 @@
 const WATCHDOG_URL = "http://127.0.0.1/other/watchdog-components/";
 const TEST_DONT_RUN_SIGN = "!";
 
-var defaultPrefs=require("./defaultPrefs.js");
-var PrefsUtils=require("./PrefsUtils.js");
+defaultPrefs=require("./defaultPrefs");
+PrefsUtils=require("./PrefsUtils");
 var fs = require('fs');
 
 
@@ -11,7 +11,7 @@ var fs = require('fs');
 function Configurator(received_prefs, mode = "FF") {
     this._prefs = {};
     this.prefs = received_prefs || defaultPrefs;
-    this.readFFPrefs();
+    this.readPrefs();
     this.tests = [];
     this.mode = mode;
 }
@@ -156,7 +156,7 @@ Configurator.prototype = {
             return [path]
         }
         else {
-            return window.DirIO.read(window.DirIO.open(path))
+            return fs.readSync(fs.openSync(path))
                 .filter(function (file) {
                     return file.path.endsWith("js")
                 })
@@ -212,7 +212,7 @@ Configurator.prototype = {
             }
 
             //4. load the test from PATH
-            else if (_self._prefs["watchdog_path"].value && arr_tests.length == 0) {
+            else if (_self._prefs["watchdog_path"].value || _self._prefs["watchdog_path"].default && arr_tests.length == 0) {
                 console.log("Loading the tests from test PATH DIR");
                 arr_tests = this._loadTestsFromDir();
             }
@@ -231,13 +231,13 @@ Configurator.prototype = {
         };
     },
 
-    readFFPrefs() {
+    readPrefs() {
         var self = this;
         this.prefs.forEach((ff_pref_obj) => {
             var pref_name = ff_pref_obj.pref.split(".").join("_");
             self._prefs[pref_name] = {
                 pref: ff_pref_obj.pref,
-                value: PrefsUtils.get(ff_pref_obj.pref),
+                value: PrefsUtils.get(ff_pref_obj.pref_name),
                 default: ff_pref_obj.default,
                 desc: ff_pref_obj.desc,
                 expected: ff_pref_obj.expected,
@@ -245,7 +245,7 @@ Configurator.prototype = {
                 must: ff_pref_obj.must
             }
         });
-        var path = this._prefs["watchdog_path"].value || "/";
+        var path = this._prefs["watchdog_path"].value || this._prefs["watchdog_path"].default;
         path = path.split(",")[0];
         this._prefs["watchdog_path"].current_path = path;
     },
@@ -264,7 +264,7 @@ Configurator.prototype = {
     },
 
     readConfigurations() {
-        this.readFFPrefs();
+        this.readPrefs();
 
         this.data["watchdogMode"] = this._prefs["watchdog_mode"].value;
         this.data["runUntilFailure"] = this._prefs["watchdog_runUntilFailure"].value || false;
@@ -273,7 +273,7 @@ Configurator.prototype = {
 
     updateState(state) {
         
-        this.readFFPrefs();
+        this.readPrefs();
         this.mode = state;
     },
 

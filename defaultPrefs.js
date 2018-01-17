@@ -1,3 +1,4 @@
+var PrefsUtils=require("./PrefsUtils")
 module.exports = [
 
     {   "pref"    : "watchdog.outputPath",
@@ -8,7 +9,7 @@ module.exports = [
     },
     {   "pref"    : "watchdog.path",
         "desc"    : "",
-        "default" : "",
+        "default" : PrefsUtils.get("watchdog_path"),
         "expected": '"string","string"',
         "ui"      : true
 

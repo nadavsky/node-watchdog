@@ -1,4 +1,4 @@
-
+var fs=require("fs")
 
 function Loader(path){
     if(Array.isArray(path)) {
@@ -37,9 +37,8 @@ Loader.prototype = {
 
         function loadFileFromOS(path) {
              console.log("[Loader] The file is saved at the file system");
-             if((window.DirIO.open(path)).exists()){
-                 var file = window.FileIO.open(path);
-                 window.FileIO.readAsync(file, "utf8", buildDataInput);
+             if(fs.existsSync(path)){
+                 fs.readFile(path,'utf8', (err,data)=>{buildDataInput(data,path, path.substr(path.lastIndexOf('/') + 1))})
              }
              else {
                  callbackFunc([],"The path " + path + " no longer exist");

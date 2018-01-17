@@ -1,13 +1,15 @@
 
 
-
+var fs= require("fs");
 
 
 module.exports = {
 
     get : function(pref, ifc) {
         try {
-            console.log("//TODO get config from config file")
+            var prefs_config = fs.readFileSync(process.env.HOME  + "/watchdog/config.json", 'utf8');
+            prefsObj = JSON.parse(prefs_config);
+            return prefsObj[pref];
         } catch(ex) { }
     },
 

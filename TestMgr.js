@@ -27,7 +27,7 @@ TestMgr = module.exports = {
         Logger = new LoggerClass(Configurator.data.logPath, null, Configurator.data.logLevel, null
             ,Configurator.data.logConsoleMode);
 
-        console.log("2*. Some small preparations");
+        //console.log("2*. Some small preparations");
         //TestMgr._exceptionRecorder.start();
 
         /*console.log("3. Initizalize UI");
@@ -200,8 +200,8 @@ TestMgr = module.exports = {
     },
 
     sendError(msg,errorLevel){
-        UiController.Dispatcher.trigger("onError", {msg : `${msg}`, errorLevel : `${errorLevel}`});
-        //alert(msg);
+        //UiController.Dispatcher.trigger("onError", {msg : `${msg}`, errorLevel : `${errorLevel}`});
+        console.log(msg);
     },
 
     runPostTasks(){
@@ -285,15 +285,15 @@ TestMgr = module.exports = {
                 obj["actions"]   = [];
                 obj["name"]      = test.fileName.split(".")[0];
 
-                if(Configurator.ff_prefs["watchdog_lastRunnedTest"].value == obj.name){
+                if(Configurator._prefs["watchdog_lastRunnedTest"].value == obj.name){
                     TestMgr.LastRunnedTest = obj.id;
                 }
                 TestMgr.Tests.push(obj);
             });
 
             //update the UI
-            UiController.Dispatcher.trigger("set/basicConfig", { user : Configurator.ff_prefs["watchdog_user_email"].value});
-            UiController.Dispatcher.trigger("set/tests", TestMgr.Tests);
+            //UiController.Dispatcher.trigger("set/basicConfig", { user : Configurator.ff_prefs["watchdog_user_email"].value});
+            //UiController.Dispatcher.trigger("set/tests", TestMgr.Tests);
 
             //compile tests
             TestMgr.compileTests(cb);
@@ -304,15 +304,15 @@ TestMgr = module.exports = {
     compileTests(cb){
         var compiledTests = [];
         var firstTestForCompile = (TestMgr.LastRunnedTest - TEST_START_INDEX) || 0;
-        var runUntilEx = Configurator.ff_prefs["watchdog_runUntilCommand"].value;
-        var runFromEx = Configurator.ff_prefs["watchdog_runFromCommand"].value;
+        var runUntilEx = Configurator._prefs["watchdog_runUntilCommand"].value;
+        var runFromEx = Configurator._prefs["watchdog_runFromCommand"].value;
         
         compileTest(firstTestForCompile);
 
         function compileTest(id){
             console.log("Comp test "  + id);
             var test = TestMgr.Tests[id];
-            if (Configurator.ff_prefs["watchdog_justRun"].value) jrManager.setTestProps(test);
+            if (Configurator._prefs["watchdog_justRun"].value) jrManager.setTestProps(test);
             var runnableTest = new RunnableTest(test, runUntilEx, runFromEx);
             compiledTests[id] = runnableTest;
         }
