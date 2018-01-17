@@ -4,6 +4,7 @@ const TEST_START_INDEX = 100;
 var Configurator= require("./Configurator");
 var LoggerClass= require("./Logger");
 var Loader= require("./Loader");
+var RunnableTest= require("./RunnableTest");
 
 TestMgr = module.exports = {
     Loader              : {},

@@ -1,14 +1,22 @@
 /**
  * Created by nadav on 9/1/16.
  */
-(function() {
-    function eventBus(ruleFunc, clearFunc) {
-        this.eventsMap = {};
-        this.ruleFunc = ruleFunc;
-        this.clearFunc = clearFunc;
-    }
 
-    Object.extend(eventBus.prototype, {
+function eventBus(ruleFunc, clearFunc) {
+    this.eventsMap = {};
+    this.ruleFunc = ruleFunc;
+    this.clearFunc = clearFunc;
+}
+Object.extend = function(target, source, descriptor) {
+    if (source) {
+        var props = Object.getOwnPropertyNames(source);
+        for (var i = 0; i < props.length; i++)
+            Object.defineProperty(target, props[i], Object.extend(Object.getOwnPropertyDescriptor(source, props[i]), descriptor));
+    }
+    return target;
+}
+
+Object.extend(eventBus.prototype, {
         addListener: function (eventType, callback, id) {
             id= id && id.toString();
             Logger.trace("EventBus : add listener called with " + eventType + "  id= " + id);
@@ -56,36 +64,36 @@
 
     });
 
-    var busInstance = new eventBus(function(actualId, expectedId) {
+var busInstance = new eventBus(function(actualId, expectedId) {
+    if (!actualId || !expectedId) return false;
+    var actual = actualId.toString().split(",").toString();
+    var exp = expectedId.toString().split(",").toString();
+    return (exp == actual);
+},
+    function(actualId, expectedId){
         if (!actualId || !expectedId) return false;
         var actual = actualId.toString().split(",").toString();
         var exp = expectedId.toString().split(",").toString();
-        return (exp == actual);
-    },
-        function(actualId, expectedId){
-            if (!actualId || !expectedId) return false;
-            var actual = actualId.toString().split(",").toString();
-            var exp = expectedId.toString().split(",").toString();
-            return (actual.startsWith(exp));
-        }
-
-    );
-
-    window.EventBus = {
-        addListener : function (eventType, callback, id) {
-            return busInstance.addListener(eventType, callback, id);
-        },
-        removeListener : function (eventType, id) {
-            busInstance.removeListener(eventType, id);
-        },
-        dispatch : function(eventType, id, retVal){
-            busInstance.dispatch(eventType, id, retVal)
-        },
-        clearAll : function(id){
-            id ? busInstance.clearAll(id) : busInstance.eventsMap = {};
-
-        }
+        return (actual.startsWith(exp));
     }
 
+);
 
-})();
+global.EventBus = {
+    addListener : function (eventType, callback, id) {
+        return busInstance.addListener(eventType, callback, id);
+    },
+    removeListener : function (eventType, id) {
+        busInstance.removeListener(eventType, id);
+    },
+    dispatch : function(eventType, id, retVal){
+        busInstance.dispatch(eventType, id, retVal)
+    },
+    clearAll : function(id){
+        id ? busInstance.clearAll(id) : busInstance.eventsMap = {};
+
+    }
+}
+
+
+

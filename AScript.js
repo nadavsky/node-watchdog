@@ -1,6 +1,7 @@
 
-EventBus = require("./EventBus.js");
-
+EventBus = require("./EventBus");
+Sandbox = require("sandbox");
+Sandbox.prototype = require("/")
 
 var ASBaseError = (function() {
     var nextId = 1;
@@ -119,7 +120,7 @@ ASVerifier.prototype = {
 	get isFatal() { return this.errors.some(err => err.fatal); }
 }
 
-global.AScript = function(data, topScript, parentAction, filename, id, beforeCmd, runtimeProps) {
+AScript = function(data, topScript, parentAction, filename, id, beforeCmd, runtimeProps) {
     var sandbox = this.sandbox = topScript ? topScript.sandbox : new Sandbox(filename),
         self = this;
 
@@ -391,6 +392,8 @@ Object.extend(AScript.prototype, {
     }
 });
 
+module.exports=AScript;
+
 function Action(script, rawAction) {
     this.positionInScript = script._curIndex + 1;
     var verifier = new ASVerifier(script.topScript.stack.concat(this.positionInScript).join(".") + " " + rawAction.desc);
@@ -589,3 +592,12 @@ const alertsWhichAreNotQuestions = [
     'Please select all relevant entries to be included in the drop-down menu',
     'The item\'s search region, is a rectangular area on the page that contains it. Adjust this region by resizing or moving it.'
 ];
+
+Object.extend = function(target, source, descriptor) {
+    if (source) {
+        var props = Object.getOwnPropertyNames(source);
+        for (var i = 0; i < props.length; i++)
+            Object.defineProperty(target, props[i], Object.extend(Object.getOwnPropertyDescriptor(source, props[i]), descriptor));
+    }
+    return target;
+}
