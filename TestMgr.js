@@ -2,8 +2,10 @@ var Logger, Configurator, UiController, jrManager;
 const TEST_START_INDEX = 100;
 
 var Configurator= require("./Configurator");
+var LoggerClass= require("./Logger");
+var Loader= require("./Loader");
 
-module.exports = {
+TestMgr = module.exports = {
     Loader              : {},
     Tests               : [],
     TestsIdsQueueForRun : [],
@@ -26,15 +28,14 @@ module.exports = {
             ,Configurator.data.logConsoleMode);
 
         console.log("2*. Some small preparations");
-        Utils.setPref("browser.dom.window.dump.enabled", true);
         //TestMgr._exceptionRecorder.start();
 
-        console.log("3. Initizalize UI");
+        /*console.log("3. Initizalize UI");
         UiController = new UIController();
         this._initEventListeners();
 
         UiController.Dispatcher.trigger("set/settings", Object.keys(Configurator.ff_prefs).map(key => Configurator.ff_prefs[key]).filter(pref => !!pref.ui));
-        UiController.Dispatcher.trigger("set/runState",  Configurator.checkTheStateOfTestMgr());
+        UiController.Dispatcher.trigger("set/runState",  Configurator.checkTheStateOfTestMgr());*/
 
         //runMode == "error" ? TestMgr.sendError("You have mismatch of prefs, please select one of the available modes (devMode/Browser/Dashboard)") : UiController.Dispatcher.trigger("set/runmode", Configurator.getMode());
 
