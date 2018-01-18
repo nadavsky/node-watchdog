@@ -49,10 +49,10 @@ LoggerClass.prototype =  {
     _initOutputFiles(){
         var path = this.path ?  this.path :  process.env.HOME + "/watchdog";
         if(!fs.existsSync(path)) fs.mkdirSync(path);
-        //fs.appendFile(path, this.filename);
+        fs.appendFileSync(path+"/"+this.filename);
         this.outputDir    =  path;
         this.outputFile   =  fs.openSync(path+"/"+this.filename,'a');
-        //if (this.outputFile.exists()) window.FileIO.unlink(this.outputFile);
+        fs.ftruncateSync(this.outputFile);
     },
 
     _supportedLevels(){
