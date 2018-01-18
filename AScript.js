@@ -1,7 +1,6 @@
 
 EventBus = require("./EventBus");
-Sandbox = require("sandbox");
-Sandbox.prototype = require("/")
+Sandbox = require("./Sandbox");
 
 var ASBaseError = (function() {
     var nextId = 1;
@@ -144,7 +143,7 @@ AScript = function(data, topScript, parentAction, filename, id, beforeCmd, runti
     this.parentAction = parentAction;
     if (this.topScript == this) {
         this.topScript.stack = [id,];
-        this.topScript.meta = sandbox.global.meta || {};
+        //this.topScript.meta = sandbox.global.meta || {};
     }
 	this._endAction = this._endAction.bind(this);
 

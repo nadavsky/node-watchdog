@@ -37,6 +37,7 @@ proxyListener(event, commandId){
 }
 */
 var Test = require("./Test")
+
 function RunnableTest(test, runUntilEx, runFromEx) {
     function updateFromUntilActions(actions){
         if(runUntilEx) self.runUntil = self._findActionId(runUntilEx, actions);
@@ -46,7 +47,7 @@ function RunnableTest(test, runUntilEx, runFromEx) {
         that.actions = testsContent.actions;
         that.invalid = testsContent.invalid || "";
         that.meta = testsContent.meta;
-        that.excluded = Configurator.ff_prefs["watchdog_justRun"].value && ((testsContent.meta.excludeJustRun && "Test excluded in Just Run mode") ||
+        that.excluded = Configurator._prefs["watchdog_justRun"].value && ((testsContent.meta.excludeJustRun && "Test excluded in Just Run mode") ||
             (!self.hasPublish && "Test excluded in Just Run mode - no publish") || test.excluded);
     };
 
@@ -66,7 +67,7 @@ function RunnableTest(test, runUntilEx, runFromEx) {
     }
 
     setDataForUI(jsonRep);
-    UiController.Dispatcher.trigger("add/testsContent", [that]);
+    //UiController.Dispatcher.trigger("add/testsContent", [that]);
 }
 
 RunnableTest.prototype = {

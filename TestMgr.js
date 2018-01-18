@@ -1,7 +1,7 @@
 var Logger, Configurator, UiController, jrManager;
 const TEST_START_INDEX = 100;
 
-var Configurator= require("./Configurator");
+var _Configurator= require("./Configurator");
 var LoggerClass= require("./Logger");
 var Loader= require("./Loader");
 var RunnableTest= require("./RunnableTest");
@@ -21,11 +21,11 @@ TestMgr = module.exports = {
         }
 
         console.log("1. Loading Logger Configurations");
-        Configurator = new Configurator();
+        global.Configurator = Configurator = new _Configurator();
         Configurator.prepareLoggerConfig();
 
         console.log("2. Loading Logger");
-        Logger = new LoggerClass(Configurator.data.logPath, null, Configurator.data.logLevel, null
+        global.Logger = new LoggerClass(Configurator.data.logPath, null, Configurator.data.logLevel, null
             ,Configurator.data.logConsoleMode);
 
         //console.log("2*. Some small preparations");
@@ -331,7 +331,7 @@ TestMgr = module.exports = {
 
         });
 
-        UiController.Dispatcher.trigger("set/loadTest", TestMgr.LastRunnedTest);
+        //UiController.Dispatcher.trigger("set/loadTest", TestMgr.LastRunnedTest);
         TestMgr.Tests = compiledTests;
         cb();
     },
