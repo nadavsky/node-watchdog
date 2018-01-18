@@ -42,8 +42,9 @@ Test.prototype= {
     _prepareToRun(callback){
         var $this = this;
         initParams();
-        if ($this.props.cleanTestEnv) {this._saveWindowState(callback); console.log("clean test env!!")}
-        else callback();
+        /*if ($this.props.cleanTestEnv) {this._saveWindowState(callback); console.log("clean test env!!")}
+        else callback();*/
+        callback()
         function initParams(){
             $this.runTimeParams.timeoutTimer = setTimeout(function() {
                 Logger.error("Script Timeout after" + ($this.props.testTimeout || $this.runTimeParams.Timeout));
@@ -79,7 +80,7 @@ Test.prototype= {
         }
     },
     _saveWindowState: function (callback) {
-        var $this=this;
+       /* var $this=this;
         var browserEnum = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator).getEnumerator(null);
         save();
         function save(){
@@ -91,7 +92,7 @@ Test.prototype= {
             }
             $this.winArray=winArray;
             callback();
-        }
+        }*/
 
     },
     onActionStart : function(e) {
@@ -168,8 +169,9 @@ Test.prototype= {
 
         $this.results.runtimeTestData.testData = e.testData;
         this.startTime ? this.results.duration = Math.round((Date.now() - this.startTime.getTime()) / 1000) : this.results.duration="no start time";
-        if (this.props.cleanTestEnv && (!this.compiledScript._abort || (AScript._abortMsg && (AScript._abortMsg.includes("Script Timeout") || AScript._abortMsg.includes("exit!"))))) closeOpenWindows(end);
-        else end();
+       /* if (this.props.cleanTestEnv && (!this.compiledScript._abort || (AScript._abortMsg && (AScript._abortMsg.includes("Script Timeout") || AScript._abortMsg.includes("exit!"))))) closeOpenWindows(end);
+        else end();*/
+        end();
 
 
         function closeOpenWindows(callback){
@@ -263,7 +265,7 @@ Test.prototype= {
     },
     stdout : function(msg,noTimestamp){
         this.results.stdout.push((!noTimestamp ? "[" + (new Date()).toTimeString().substr(0,8) + "] " : "") + msg);
-        window.stdout && window.stdout(msg,null,noTimestamp);
+        console.log(msg,null,noTimestamp);
     },
     abort : function(){
         this.compiledScript.abort("Test aborted");

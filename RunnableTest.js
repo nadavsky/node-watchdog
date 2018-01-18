@@ -92,7 +92,7 @@ RunnableTest.prototype = {
         EventBus.addListener("action/start", function(commandIdx){
             var commandInd = commandIdx["stack"].slice(1).join(",");
             Logger.trace(`runnableTest : action/start TestName : ${_test.name} TestId : ${_test.id} ActionIndex : ${commandInd}`);
-            UiController.Dispatcher.trigger("action/start", commandInd, _test.id);
+            //UiController.Dispatcher.trigger("action/start", commandInd, _test.id);
         },this.test.id);
 
         EventBus.addListener("action/end", function(resultData){ //TODO results format need to be settled

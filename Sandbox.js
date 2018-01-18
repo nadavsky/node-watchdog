@@ -1,8 +1,60 @@
 
-var Sandbox=require("sandbox");
+var __sandbox__=require("sandbox");
 var AScript=require("./AScript");
+var fs=require("fs");
+var util = require('util');
 
-Object.extend(Sandbox.prototype ,{
+function Sandbox(url,topSandbox){
+    var file = fs.readFileSync(url);
+    var global = this.global = Sandbox.prototype;
+    var _sandbox= new __sandbox__(file);
+
+    Object.extend(this, _sandbox);
+    Object.extend(this, _sandbox.__proto__);
+
+    this._topSb = topSandbox || this;
+    this.cmdSequence = this._topSb.cmdSequence || [];
+    global.global = global;
+    global.Utils = Object.extend({}, global.Utils);
+    global.Logger = Object.extend({}, global.Logger);
+    global.CovarageReport = Object.extend({}, global.CovarageReport);
+    var fileMatch = url.match(/([^/\.]*)(\.js)?$/);
+    global.Logger.filename = fileMatch ? fileMatch[1].toMinLength(10) : "[unknown] ";
+    global.cmd = global.cmd.bind(this);
+    global.describe = global.describe.bind(this);
+    global.test = topSandbox ?  this._topSb.global.test : new test();
+    global.test._topSb = this._topSb;
+    global.runScript = global.runScript.bind(this);
+    global.require = global.require.bind(this);
+    global.xfind = global.xfind.bind(this);
+    this.module = global.module = {
+        url		: url,
+        exports	: {},
+    };
+    this.moduleMap = {};
+
+
+
+
+
+
+
+   /* this._topSb = topSandbox || this;
+    this.test = topSandbox ?  this._topSb.global.test : new test();
+    this.test._topSb = this._topSb;
+    this.module = global.module = {
+        url		: url,
+        exports	: {},
+    };
+    this.moduleMap = {}*/
+
+}
+util.inherits(Sandbox,__sandbox__)
+Sandbox.prototype={
+    global: {
+
+    },
+
     eval(data, url) { return this.run(data); },
 
     cmdSequence : [],
@@ -230,7 +282,7 @@ Object.extend(Sandbox.prototype ,{
     },
 
     getPref : getPref
-})
+}
 
 module.exports = Sandbox;
 
@@ -240,6 +292,71 @@ function getPref(pref, ifc) {
         prefsObj = JSON.parse(prefs_config);
         return prefsObj[pref];
     } catch(ex) { }
+}
+function test(){
+
+    this.on = function(eventType, cb, isCmd){
+        //this.eventsMap[eventType] = cb.toString().contains("cmd") ? 1 : 0;
+        if(isCmd){
+            Logger.debug("on event '" + eventType+ "' on " + this.testPath())
+            this.eventsMap[eventType] ? this.eventsMap[eventType].push(cb) : this.eventsMap[eventType] = [cb];
+        }
+        else this._topSb.global.test.addListener(eventType, cb);
+    };
+
+    this.off = function(eventType, listener){ // todo : clean the specific events map if there are no more listeners with cmds
+        if(this.eventsMap[eventType]){
+            this.eventsMap[eventType].forEach((cb,i, arr)=>{if(cb == listener) arr.splice(i,1) })
+        }
+        else this._topSb.global.test.removeListener(eventType ,listener);
+    };
+
+    this.dispatch =  function(type, props){
+        if(this.eventsMap[type]){
+            Logger.debug("dispatch event '" + type+ "' on " + this.testPath())
+            var $this=this;
+            props.topScript.addScriptCommands($this.eventsMap[type], $this.testPath(), props);
+        }
+        Object.dispatch.apply(this,[type, props]);
+    };
+
+    this.exit =  function(errorMessage) {
+        this._topSb.global.cmd({
+            cmd		:  (action) => {
+                if(errorMessage) {
+                    action.verifyThat.fatal(errorMessage);
+                } else {
+                    action.script.topScript._abort = true;
+                    action.script.topScript._abortOnError = false;
+                    action.script.topScript._abortTrigger = true; //will clean the AScript._abort on script termination
+                    AScript._abortMsg = "exit!";
+                }
+
+                action.end();
+            },
+            delay	: 1,
+            desc	: "exit"
+        });
+    };
+
+    this.testPath = function(){return this._topSb.global.module.url;};
+
+    this.eventsMap = {};
+
+    this.name = function(){
+        if(this.testPath().indexOf("/") != -1)
+            return this.testPath().match(/([^/]*(?=\.js))|([^/]*$)/)[0];
+        else
+            return this.testPath().match(/[^\\]*(?=\.js)/)[0];
+    };
+
+    this.props = {
+        data : {},
+        set(prop,data){ this.data[prop] = data},
+        get(prop){return this.data[prop]}
+    };
+
+    this.zappId  = "create a zapp first";
 }
 
 Object.extend = function(target, source, descriptor) {

@@ -129,7 +129,7 @@ AScript = function(data, topScript, parentAction, filename, id, beforeCmd, runti
 
     if (typeof data == "string" || typeof data == "function") {
         try {
-			typeof data == "string" ? sandbox.eval(data, filename || "<AScript>") : data(parentAction);
+			typeof data == "string" ? sandbox.run(data) : data(parentAction);
 			data = [].concat(sandbox.cmdSequence);
         } catch(ex){
 			if (typeof ex != "string") sandbox.global.Logger.exception(ex, "AScript script");
@@ -143,7 +143,7 @@ AScript = function(data, topScript, parentAction, filename, id, beforeCmd, runti
     this.parentAction = parentAction;
     if (this.topScript == this) {
         this.topScript.stack = [id,];
-        //this.topScript.meta = sandbox.global.meta || {};
+        this.topScript.meta = sandbox.global.meta || {};
     }
 	this._endAction = this._endAction.bind(this);
 

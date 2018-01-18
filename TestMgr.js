@@ -174,7 +174,7 @@ TestMgr = module.exports = {
         var curTest = TestMgr.Tests[test.id-TEST_START_INDEX].test;
         curTest.wasRun = true;
         var pass = curTest.results.failures.length === 0;
-        UiController.Dispatcher.trigger("test/end", test.id, {pass: pass});
+        //UiController.Dispatcher.trigger("test/end", test.id, {pass: pass});
         //EventBus.clearAll(testId.id);
 
         if(TestMgr.abortRun){
@@ -182,7 +182,7 @@ TestMgr = module.exports = {
             pass = false;
         }
 
-        if(Configurator.ff_prefs["watchdog_runUntilFailure"].value && pass){
+        if(Configurator._prefs["watchdog_runUntilFailure"].value && pass){
             TestMgr.TestsIdsQueueForRun.unshift(TestMgr.CurrentRunningTest + TEST_START_INDEX);
         }
 
@@ -207,7 +207,7 @@ TestMgr = module.exports = {
     },
 
     runPostTasks(){
-        if(Configurator.ff_prefs["watchdog_justRunGenerate"].value){
+        if(Configurator._prefs["watchdog_justRunGenerate"].value){
             TestMgr.updateJustRunTests(()=>{
                 Logger.debug("*****************dispatch postTasks/end");
                 TestMgr.printResults();
