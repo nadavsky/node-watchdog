@@ -2,7 +2,7 @@
 var __sandbox__=require("sandbox");
 var AScript=require("./AScript");
 var fs=require("fs");
-var util = require('util');
+
 
 function Sandbox(url,topSandbox){
     var file = fs.readFileSync(url);
@@ -49,7 +49,7 @@ function Sandbox(url,topSandbox){
     this.moduleMap = {}*/
 
 }
-util.inherits(Sandbox,__sandbox__)
+
 Sandbox.prototype={
     global: {
 

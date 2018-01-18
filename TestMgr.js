@@ -26,7 +26,7 @@ TestMgr = module.exports = {
         Configurator.prepareLoggerConfig();
 
         console.log("2. Loading Logger");
-        global.Logger = new LoggerClass(Configurator.data.logPath, null, Configurator.data.logLevel, null
+        global.Logger = Logger = new LoggerClass(Configurator.data.logPath, null, Configurator.data.logLevel, null
             ,Configurator.data.logConsoleMode);
 
         //console.log("2*. Some small preparations");
@@ -151,7 +151,7 @@ TestMgr = module.exports = {
     },
 
     runTest(testId,startId,endId){
-        Logger = new LoggerClass(Configurator.data.logPath, (Configurator.data.localMode || TestMgr.Tests[testId-TEST_START_INDEX].test.name), Configurator.data.logLevel, null, Configurator.data.logConsoleMode);
+        global.Logger = new LoggerClass(Configurator.data.logPath, (Configurator.data.localMode || TestMgr.Tests[testId-TEST_START_INDEX].test.name), Configurator.data.logLevel, null, Configurator.data.logConsoleMode);
 
         TestMgr.CurrentRunningTest = testId -TEST_START_INDEX;
         TestMgr.abortRun = false;
@@ -210,12 +210,12 @@ TestMgr = module.exports = {
         if(Configurator._prefs["watchdog_justRunGenerate"].value){
             TestMgr.updateJustRunTests(()=>{
                 Logger.debug("*****************dispatch postTasks/end");
-                TestMgr.printResults();
+                //TestMgr.printResults();
                 TestMgr.dispatch("postTasks/end");
             });
         }
         else {
-            TestMgr.printResults();
+            //TestMgr.printResults();
             TestMgr.dispatch("postTasks/end");
         }
     },

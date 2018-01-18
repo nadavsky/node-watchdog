@@ -51,7 +51,7 @@ LoggerClass.prototype =  {
         if(!fs.existsSync(path)) fs.mkdirSync(path);
         //fs.appendFile(path, this.filename);
         this.outputDir    =  path;
-        this.outputFile   =  path+ "/"+ this.filename ;
+        this.outputFile   =  fs.openSync(path+"/"+this.filename,'a');
         //if (this.outputFile.exists()) window.FileIO.unlink(this.outputFile);
     },
 
@@ -103,6 +103,7 @@ LoggerClass.prototype =  {
     },
 
     dump(force){
+        console.log("dump dump dump")
         var joined = this.log.join("");
         if (this.log.length) {
             this.consoleMode ?
@@ -115,7 +116,7 @@ LoggerClass.prototype =  {
         var joined = this.log.join("");
         if (this.log.length) {
             this.consoleMode ?
-                console.log(joined) : fs.writeFileSync(this.outputFile, joined, "a");
+                console.log(joined) : fs.writeFileSync(this.outputFile, joined, "utf8");
             this.log.splice(0);
         }
     }
