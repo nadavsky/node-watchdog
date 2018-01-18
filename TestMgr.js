@@ -6,6 +6,7 @@ var LoggerClass= require("./Logger");
 var Loader= require("./Loader");
 var RunnableTest= require("./RunnableTest");
 
+
 TestMgr = module.exports = {
     Loader              : {},
     Tests               : [],
@@ -260,7 +261,7 @@ TestMgr = module.exports = {
         if(Configurator.data.watchdogMode == "auto"){
             console.log("5. In auto modeee");
             //UiController.Dispatcher.trigger("select/all/tests");
-            //UiController.Dispatcher.trigger("run/selected/tests");
+            TestMgr._onTestsRun([100]) //UiController.Dispatcher.trigger("run/selected/tests");
         }
         else {
             //just wait ...

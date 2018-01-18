@@ -80,7 +80,7 @@ var busInstance = new eventBus(function(actualId, expectedId) {
 
 );
 
-global.EventBus = {
+EventBus = {
     addListener : function (eventType, callback, id) {
         return busInstance.addListener(eventType, callback, id);
     },
@@ -96,5 +96,5 @@ global.EventBus = {
     }
 }
 
-
+module.exports = EventBus;
 

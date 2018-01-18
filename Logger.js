@@ -67,7 +67,7 @@ LoggerClass.prototype =  {
     },
 
     _destroyListenrs(){
-        instance.obsService.removeObserver(instance.listener, 'console-api-log-event', false);
+        //instance.obsService.removeObserver(instance.listener, 'console-api-log-event', false);
     },
 
     _buildMethods(){

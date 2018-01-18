@@ -251,16 +251,16 @@ Configurator.prototype = {
     },
 
     
-    updateFFPrefs(ff_pref, value) {
-        console.log("updated preff " + ff_pref + " ---> value " + value);
-        var pref_name = ff_pref.split(".").join("_");
+    updateFFPrefs(pref, value) {
+        console.log("updated preff " + pref + " ---> value " + value);
+        var pref_name = pref.split(".").join("_");
         this._prefs[pref_name] = {
-            pref: ff_pref,
+            pref: pref,
             value: value,
             default: this._prefs[pref_name] || "",
             desc: this._prefs[pref_name] || "not known",
         };
-        pref.set(ff_pref, value);
+        //PrefsUtils.set(pref, value); //TODO fix set pref to set into config.json
     },
 
     readConfigurations() {
