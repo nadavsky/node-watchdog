@@ -266,7 +266,7 @@ Configurator.prototype = {
     readConfigurations() {
         this.readPrefs();
 
-        this.data["watchdogMode"] = this._prefs["watchdog_mode"].value;
+        this.data["watchdogMode"] = this._prefs["watchdog_mode"].value || this._prefs["watchdog_mode"].default;
         this.data["runUntilFailure"] = this._prefs["watchdog_runUntilFailure"].value || false;
         this.data["testsSuite"] = this.getArrayOfTestsPaths();
     },

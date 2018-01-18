@@ -252,15 +252,15 @@ TestMgr = module.exports = {
                 printFile(key, test.test.results.collectData[key]);
             })
         });
-        stdout("printResults - end.  " + (Configurator.ff_prefs["watchdog_outputPath"].value || window.DirIO.get("Home") || "none"));
+        stdout("printResults - end.  " + (Configurator._prefs["watchdog_outputPath"].value || window.DirIO.get("Home") || "none"));
     },
 
     runInSelectedMode(){
         //we are in auto mode
         if(Configurator.data.watchdogMode == "auto"){
             console.log("5. In auto modeee");
-            UiController.Dispatcher.trigger("select/all/tests");
-            UiController.Dispatcher.trigger("run/selected/tests");
+            //UiController.Dispatcher.trigger("select/all/tests");
+            //UiController.Dispatcher.trigger("run/selected/tests");
         }
         else {
             //just wait ...
@@ -338,9 +338,9 @@ TestMgr = module.exports = {
 
     quit : function() {
         Logger.dumpSync();
-        Components.utils.import("resource://gre/modules/Services.jsm");
-        window.setTimeout(function(){
-            Services.startup.quit(Services.startup.eForceQuit); 
+        setTimeout(function(){
+            console.log("todo: implement quit!")
+            //Services.startup.quit(Services.startup.eForceQuit);
         }, 100);
     },
 
@@ -378,7 +378,7 @@ TestMgr = module.exports = {
 function stdout(msg, test, noTimestamp) {
     if (!noTimestamp) msg = "[" + (new Date()).toTimeString().substr(0,8) + "] " + msg;
     dump(msg + "\n");
-    window.console.log(msg + "\n");
+    console.log(msg + "\n");
 }
 
 console.log("Start the loading of TestManager");

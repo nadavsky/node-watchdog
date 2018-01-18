@@ -16,7 +16,7 @@ module.exports = [
     },
     {   "pref"    : "watchdog.mode",
         "desc"    : "",
-        "default" : ""
+        "default" : "auto"
     },
     {   "pref"    : "watchdog.coverage",
         "desc"    : "",

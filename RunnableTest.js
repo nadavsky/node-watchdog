@@ -79,14 +79,14 @@ RunnableTest.prototype = {
             var nestedCommandInd = commandIdx["stack"].slice(1).join(",");
             var topCommandInd = commandIdx.stack[1];
             Logger.trace(`runnableTest : action/find/start TestName : ${_test.name} TestId : ${_test.id} TopActionIndex : ${topCommandInd}`);
-            UiController.Dispatcher.trigger("action/find/start", topCommandInd, _test.id);
+            //UiController.Dispatcher.trigger("action/find/start", topCommandInd, _test.id);
         },this.test.id);
 
         EventBus.addListener("action/find/end", function(commandIdx){
             var nestedCommandInd = commandIdx["stack"].slice(1).join(",");
             var topCommandInd = commandIdx.stack[1];
             Logger.trace(`runnableTest : action/find/end TestName : ${_test.name} TestId : ${_test.id} TopActionIndex : ${topCommandInd}`);
-            UiController.Dispatcher.trigger("action/find/end", topCommandInd, _test.id);
+            //UiController.Dispatcher.trigger("action/find/end", topCommandInd, _test.id);
         },this.test.id);
         
         EventBus.addListener("action/start", function(commandIdx){
@@ -102,19 +102,19 @@ RunnableTest.prototype = {
             var time  = Date.now() - _test.startTime.getTime() || "0:00";
             time = pad(Math.floor(time/60000)) + ":" + pad(Math.round(time/1000) % 60);
             Logger.trace(`runnableTest : action/end TestName : ${_test.name} TestId : ${_test.id} ActionIndex : ${index} Results : ${error}`);
-            UiController.Dispatcher.trigger("action/end", index, _test.id, {pass: state, time: time, error : error});
+            //UiController.Dispatcher.trigger("action/end", index, _test.id, {pass: state, time: time, error : error});
         },this.test.id);
 
         EventBus.addListener("test/start", function(){
            console.log(`runnableTest : test/start TestName : ${_test.name} TestId : ${_test.id}`);
-            UiController.Dispatcher.trigger("test/start", _test.id);
+            //UiController.Dispatcher.trigger("test/start", _test.id);
         },this.test.id);
 
         EventBus.addListener("test/update", function(testsContent){ //Add listener to update nested commands
             Logger.trace("in test/update runtime");
             _test.actions = testsContent.actions;
             _test.invalid = testsContent.invalid || "";
-            UiController.Dispatcher.trigger("add/testsContent", [_test]);
+            //UiController.Dispatcher.trigger("add/testsContent", [_test]);
         },_test.id);
 
         /*EventBus.addListener("test/end", function(results){

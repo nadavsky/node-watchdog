@@ -1,6 +1,7 @@
 /**
  * Created by nadav on 9/1/16.
  */
+var EventEmitter = require('events');
 
 function eventBus(ruleFunc, clearFunc) {
     this.eventsMap = {};
