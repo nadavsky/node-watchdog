@@ -132,7 +132,7 @@ AScript = function(data, topScript, parentAction, filename, id, beforeCmd, runti
 			typeof data == "string" ? sandbox.run(data) : data(parentAction);
 			data = [].concat(sandbox.cmdSequence);
         } catch(ex){
-			if (typeof ex != "string") sandbox.global.Logger.exception(ex, "AScript script");
+			if (typeof ex != "string") sandbox.Logger.exception(ex, "AScript script");
 			data = [];
 			data.invalid = typeof ex == "string" ? ex : "Exception: " + (ex.message || "Invalid") + ` (${ex.fileName}:${ex.lineNumber})`;
 		}
@@ -143,7 +143,7 @@ AScript = function(data, topScript, parentAction, filename, id, beforeCmd, runti
     this.parentAction = parentAction;
     if (this.topScript == this) {
         this.topScript.stack = [id,];
-        this.topScript.meta = sandbox.global.meta || {};
+        this.topScript.meta = sandbox.meta || {};
     }
 	this._endAction = this._endAction.bind(this);
 
@@ -212,7 +212,7 @@ Object.extend(AScript.prototype, {
         if (++this._curIndex >= this._data.length && this.topScript == this) {
             dispached = true;
             var dataLength = this._data.length;
-            this.sandbox.global.test.dispatch("topScript/beforeExit", { errors :this._errors.errors, topScript: this });
+            this.sandbox.test.dispatch("topScript/beforeExit", { errors :this._errors.errors, topScript: this });
         }
 		if ((this._curIndex >= this._data.length) || (this.runUntilAction && this._curIndex-1 == this._data.indexOf(this.runUntilAction))) {
 			this._doScriptEnd();
@@ -296,7 +296,7 @@ Object.extend(AScript.prototype, {
             duration     : this._curAction.duration
         });
         this.topScript.stack.pop();
-        this.sandbox.global.test.dispatch("action/end", { retVal : this._errors });
+        this.sandbox.test.dispatch("action/end", { retVal : this._errors });
 
         if (!this._handleAbort()){
 			if (errorObj && errorObj.isFatal) this._doScriptEnd();
@@ -326,9 +326,9 @@ Object.extend(AScript.prototype, {
         --this.topScript.depth;
 		this._errors._import(errorObj);
         var isTop = this.topScript == this,
-            testData = isTop && this.sandbox.global.test.props.data;
+            testData = isTop && this.sandbox.test.props.data;
         if(isTop){
-            this.sandbox.global.test.dispatch("topScript/exit", { errors : this._errors.errors});
+            this.sandbox.test.dispatch("topScript/exit", { errors : this._errors.errors});
         }
         console.log("_do script end with " + this.topScript.stack.toString())
         EventBus.dispatch("script/end", this.topScript.stack.toString(),  { retVal : this._errors ,top: isTop, testData: testData});
@@ -398,7 +398,6 @@ function Action(script, rawAction) {
     var verifier = new ASVerifier(script.topScript.stack.concat(this.positionInScript).join(".") + " " + rawAction.desc);
 	Object.defineProperty(this, "script", { value : script });
     Object.defineProperty(this, "verifyThat", { value : verifier });
-    Object.defineProperty(this, "theWindow", { value : window });
 	Object.defineProperty(this, "end", { value : this.end.bind(this) });
 
 	Object.keys(rawAction).forEach(function(prop) { this[prop] = rawAction[prop]; }, this);

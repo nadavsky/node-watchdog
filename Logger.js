@@ -103,7 +103,6 @@ LoggerClass.prototype =  {
     },
 
     dump(force){
-        console.log("dump dump dump")
         var joined = this.log.join("");
         if (this.log.length) {
             this.consoleMode ?

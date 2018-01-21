@@ -340,7 +340,7 @@ TestMgr = module.exports = {
     quit : function() {
         Logger.dumpSync();
         setTimeout(function(){
-            console.log("todo: implement quit!")
+            process.exit()
             //Services.startup.quit(Services.startup.eForceQuit);
         }, 100);
     },

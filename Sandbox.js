@@ -1,37 +1,60 @@
 
-var __sandbox__=require("sandbox");
+var {VM}=require("vm2");
 var AScript=require("./AScript");
 var fs=require("fs");
 
 
 function Sandbox(url,topSandbox){
-    var file = fs.readFileSync(url);
-    var global = this.global = Sandbox.prototype;
-    var _sandbox= new __sandbox__(file);
 
-    Object.extend(this, _sandbox);
-    Object.extend(this, _sandbox.__proto__);
+    var _sandox = this._sandox = new VM({
+        "nesting" :true,
+        "sandbox"	: SandboxPrototype,
+        "sandboxName"			: url
+    });
+
+    Object.extend(this, SandboxPrototype);
+    Object.extend(this, _sandox.__proto__);
+    Object.extend(this, _sandox);
+
+
+    this._topSb = topSandbox || this;
+
+    this.cmdSequence = this._topSb.cmdSequence || [];
+    _sandox._sandox = _sandox;
+    _sandox._context.cmd = _sandox.options.sandbox.cmd.bind(this);
+    this.test = topSandbox ?  this._topSb.test : new test();
+    this.test._topSb = this._topSb;
+    _sandox.Logger = Object.extend(this, SandboxPrototype.Logger);
+
+
+    /*var file = fs.readFileSync(url);
+    var _global = this._global = Sandbox.prototype;
+
+    Object.extend(_global, SandboxPrototype);
+    Object.extend(this, _global.__proto__);
 
     this._topSb = topSandbox || this;
     this.cmdSequence = this._topSb.cmdSequence || [];
-    global.global = global;
-    global.Utils = Object.extend({}, global.Utils);
-    global.Logger = Object.extend({}, global.Logger);
-    global.CovarageReport = Object.extend({}, global.CovarageReport);
+    _global._global = _global;
+    _global.Utils = Object.extend({}, _global.Utils);
+    _global.Logger = Object.extend({}, _global.Logger);
+    _global.CovarageReport = Object.extend({}, _global.CovarageReport);
     var fileMatch = url.match(/([^/\.]*)(\.js)?$/);
-    global.Logger.filename = fileMatch ? fileMatch[1].toMinLength(10) : "[unknown] ";
-    global.cmd = global.cmd.bind(this);
-    global.describe = global.describe.bind(this);
-    global.test = topSandbox ?  this._topSb.global.test : new test();
-    global.test._topSb = this._topSb;
-    global.runScript = global.runScript.bind(this);
-    global.require = global.require.bind(this);
-    global.xfind = global.xfind.bind(this);
-    this.module = global.module = {
+    _global.Logger.filename = fileMatch ? fileMatch[1].toMinLength(10) : "[unknown] ";
+    _global.cmd = _global.cmd.bind(this);
+    _global.describe = _global.describe.bind(this);
+    _global.test = topSandbox ?  this._topSb._global.test : new test();
+    _global.test._topSb = this._topSb;
+    _global.runScript = _global.runScript.bind(this);
+    _global.require = _global.require.bind(this);
+    _global.xfind = _global.xfind.bind(this);
+    this.module = _global.module = {
         url		: url,
         exports	: {},
     };
-    this.moduleMap = {};
+    this.moduleMap = {};*/
+
+
 
 
 
@@ -40,9 +63,9 @@ function Sandbox(url,topSandbox){
 
 
    /* this._topSb = topSandbox || this;
-    this.test = topSandbox ?  this._topSb.global.test : new test();
+    this.test = topSandbox ?  this._topSb._global.test : new test();
     this.test._topSb = this._topSb;
-    this.module = global.module = {
+    this.module = _global.module = {
         url		: url,
         exports	: {},
     };
@@ -50,8 +73,8 @@ function Sandbox(url,topSandbox){
 
 }
 
-Sandbox.prototype={
-    global: {
+SandboxPrototype={
+    _global: {
 
     },
 
@@ -145,7 +168,7 @@ Sandbox.prototype={
     },
 
     describe : function(desc, func) {
-        this.global.cmd({ comment : true, desc : desc });
+        this._global.cmd({ comment : true, desc : desc });
         func();
     },
 
@@ -182,10 +205,10 @@ Sandbox.prototype={
             var sandbox = new Sandbox(url, this._topSb);
             try {
                 var res;
-                sandbox.global.exports = function(obj) { res = obj; };
+                sandbox._global.exports = function(obj) { res = obj; };
                 sandbox.eval(GlobalCache[url], url);
-                this._topSb.moduleMap[url] = res || sandbox.global.module.exports;
-                sandbox.global.exports = null;
+                this._topSb.moduleMap[url] = res || sandbox._global.module.exports;
+                sandbox._global.exports = null;
             } catch(ex) {
                 Logger.error(`require("${url}") - Failed during eval. ex=${ex}`);
                 throw ex;
@@ -283,7 +306,8 @@ Sandbox.prototype={
 
     getPref : getPref
 }
-
+var moreProps=["Node","setTimeout","clearTimeout","KeyEvent", "FormData", "File", ""];
+moreProps.forEach(function(item){ SandboxPrototype[item] = global[item]; });
 module.exports = Sandbox;
 
 function getPref(pref, ifc) {
@@ -301,14 +325,14 @@ function test(){
             Logger.debug("on event '" + eventType+ "' on " + this.testPath())
             this.eventsMap[eventType] ? this.eventsMap[eventType].push(cb) : this.eventsMap[eventType] = [cb];
         }
-        else this._topSb.global.test.addListener(eventType, cb);
+        else this._topSb.test.addListener(eventType, cb);
     };
 
     this.off = function(eventType, listener){ // todo : clean the specific events map if there are no more listeners with cmds
         if(this.eventsMap[eventType]){
             this.eventsMap[eventType].forEach((cb,i, arr)=>{if(cb == listener) arr.splice(i,1) })
         }
-        else this._topSb.global.test.removeListener(eventType ,listener);
+        else this._topSb.test.removeListener(eventType ,listener);
     };
 
     this.dispatch =  function(type, props){
@@ -321,7 +345,7 @@ function test(){
     };
 
     this.exit =  function(errorMessage) {
-        this._topSb.global.cmd({
+        this._topSb.cmd({
             cmd		:  (action) => {
                 if(errorMessage) {
                     action.verifyThat.fatal(errorMessage);
@@ -339,7 +363,7 @@ function test(){
         });
     };
 
-    this.testPath = function(){return this._topSb.global.module.url;};
+    this.testPath = function(){return this._topSb.module.url;};
 
     this.eventsMap = {};
 
@@ -358,6 +382,12 @@ function test(){
 
     this.zappId  = "create a zapp first";
 }
+var __then = function(onFulfilled, onRejected){
+    if (onFulfilled) this.onFulfilled = onFulfilled;
+    if (onRejected) this.onRejected = onRejected;
+};
+
+var __catch = function(onRejected) { this.onRejected = onRejected; }
 
 Object.extend = function(target, source, descriptor) {
     if (source) {
