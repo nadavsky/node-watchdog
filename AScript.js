@@ -119,7 +119,7 @@ ASVerifier.prototype = {
 	get isFatal() { return this.errors.some(err => err.fatal); }
 }
 
-AScript = function(data, topScript, parentAction, filename, id, beforeCmd, runtimeProps) {
+global.AScript = function(data, topScript, parentAction, filename, id, beforeCmd, runtimeProps) {
     var sandbox = this.sandbox = topScript ? topScript.sandbox : new Sandbox(filename),
         self = this;
 

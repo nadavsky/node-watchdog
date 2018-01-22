@@ -1,8 +1,6 @@
 
 var {VM}=require("vm2");
-var AScript=require("./AScript");
 var fs=require("fs");
-
 
 function Sandbox(url,topSandbox){
 
@@ -27,6 +25,7 @@ function Sandbox(url,topSandbox){
     _sandox.Logger = Object.extend(this, SandboxPrototype.Logger);
     var fileMatch = url.match(/([^/\.]*)(\.js)?$/);
     _sandox._context.Logger.filename = fileMatch ? fileMatch[1].toMinLength(10) : "[unknown] ";
+    _sandox._context.runScript = _sandox.options.sandbox.runScript.bind(this);
 
 
     /*var file = fs.readFileSync(url);
