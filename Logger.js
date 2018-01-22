@@ -18,6 +18,7 @@ function LoggerClass (outputPath, filename, debugLevel,suffix = ".log", consoleM
     this._buildMethods();
     if(!consoleMode){
         this._initOutputFiles();
+        this._initConsoleHook()
 
     }
     instance = this;
@@ -64,6 +65,18 @@ LoggerClass.prototype =  {
         function str10(num) { return num < 10 ? "0" + num : num; }
         function str100(num) { return num < 10 ? "00" + num : (num < 100 ? "0" + num : num); }
         return "".concat(str10(date.getHours()), ":", str10(date.getMinutes()), ":", str10(date.getSeconds()), ".",  str100(date.getMilliseconds()));
+    },
+
+    _initConsoleHook(){
+        var _self = this;
+
+        console.log = function(msg) {
+            //_self.debug(msg.filename + " - " + msg.lineNumber + " - " + this.log.caller.name + " - " + msg.level + " - " + msg.arguments[0], "console  ");
+            _self.debug(msg, "console  ");
+            process.stdout.write(msg + '\n');
+        };
+
+
     },
 
     _destroyListenrs(){

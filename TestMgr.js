@@ -383,4 +383,3 @@ function stdout(msg, test, noTimestamp) {
 }
 
 console.log("Start the loading of TestManager");
-//window.addEventListener("load", function() { TestMgr.init();});
