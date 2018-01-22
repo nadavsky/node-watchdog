@@ -25,6 +25,8 @@ function Sandbox(url,topSandbox){
     this.test = topSandbox ?  this._topSb.test : new test();
     this.test._topSb = this._topSb;
     _sandox.Logger = Object.extend(this, SandboxPrototype.Logger);
+    var fileMatch = url.match(/([^/\.]*)(\.js)?$/);
+    _sandox._context.Logger.filename = fileMatch ? fileMatch[1].toMinLength(10) : "[unknown] ";
 
 
     /*var file = fs.readFileSync(url);

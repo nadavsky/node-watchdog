@@ -1,4 +1,4 @@
-var Logger, Configurator, UiController, jrManager;
+//var  Configurator, UiController, jrManager;
 const TEST_START_INDEX = 100;
 
 var _Configurator= require("./Configurator");
@@ -26,7 +26,7 @@ TestMgr = module.exports = {
         Configurator.prepareLoggerConfig();
 
         console.log("2. Loading Logger");
-        global.Logger = Logger = new LoggerClass(Configurator.data.logPath, null, Configurator.data.logLevel, null
+        global.Logger = new LoggerClass(Configurator.data.logPath, null, Configurator.data.logLevel, null
             ,Configurator.data.logConsoleMode);
 
         //console.log("2*. Some small preparations");
