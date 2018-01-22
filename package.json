@@ -2,6 +2,6 @@
   "name": "node-watchdog",
   "version": "0.0.1",
   "dependencies": {
-    "sandbox": "0.8.6"
+    "vm2": "3.5.2"
   }
 }
