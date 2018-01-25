@@ -2,6 +2,7 @@
   "name": "node-watchdog",
   "version": "0.0.1",
   "dependencies": {
-    "vm2": "3.5.2"
+    "vm2": "3.5.2",
+    "sync-request": "4.1.0"
   }
 }

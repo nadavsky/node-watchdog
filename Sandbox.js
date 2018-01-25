@@ -1,6 +1,8 @@
 
 var {VM}=require("vm2");
 var fs=require("fs");
+var request = require('sync-request');
+const { URL } = require('url');
 
 function Sandbox(url,topSandbox){
 
@@ -27,6 +29,7 @@ function Sandbox(url,topSandbox){
     _sandox._context.Logger.filename = fileMatch ? fileMatch[1].toMinLength(10) : "[unknown] ";
     _sandox._context.runScript = _sandox.options.sandbox.runScript.bind(this);
     _sandox._context.require = _sandox.options.sandbox.require.bind(this);
+    this.moduleMap = {}
 
 
     /*var file = fs.readFileSync(url);
@@ -191,11 +194,10 @@ SandboxPrototype={
 
         if (!this._topSb.moduleMap[url]) {
             if (!GlobalCache[url]) {
-                var request = new XMLHttpRequest();
-                request.open('GET', url, false);  // "false" makes the request synchronous
-                request.send(null);
 
-                if (request.status === 200) {
+                var res = request('GET', url); //synchronous request
+
+                if (res.statusCode === 200) {
                     GlobalCache[url] = request.responseText;
                 } else {
                     var msg = `require("${url}") - Failed to download module. status=${request.status}`;
@@ -384,6 +386,7 @@ function test(){
 
     this.zappId  = "create a zapp first";
 }
+var GlobalCache = {};
 var requireUrl = getPref("watchdog.requireUrl") || "http://127.0.0.1/other/watchdog-components/";
 var __then = function(onFulfilled, onRejected){
     if (onFulfilled) this.onFulfilled = onFulfilled;
