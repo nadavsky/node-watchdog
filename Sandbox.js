@@ -26,6 +26,7 @@ function Sandbox(url,topSandbox){
     var fileMatch = url.match(/([^/\.]*)(\.js)?$/);
     _sandox._context.Logger.filename = fileMatch ? fileMatch[1].toMinLength(10) : "[unknown] ";
     _sandox._context.runScript = _sandox.options.sandbox.runScript.bind(this);
+    _sandox._context.require = _sandox.options.sandbox.require.bind(this);
 
 
     /*var file = fs.readFileSync(url);
@@ -383,6 +384,7 @@ function test(){
 
     this.zappId  = "create a zapp first";
 }
+var requireUrl = getPref("watchdog.requireUrl") || "http://127.0.0.1/other/watchdog-components/";
 var __then = function(onFulfilled, onRejected){
     if (onFulfilled) this.onFulfilled = onFulfilled;
     if (onRejected) this.onRejected = onRejected;
