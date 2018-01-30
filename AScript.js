@@ -129,10 +129,10 @@ global.AScript = function(data, topScript, parentAction, filename, id, beforeCmd
 
     if (typeof data == "string" || typeof data == "function") {
         try {
-			typeof data == "string" ? sandbox.run(data) : data(parentAction);
+			typeof data == "string" ? sandbox.eval(data) : data(parentAction);
 			data = [].concat(sandbox.cmdSequence);
         } catch(ex){
-			if (typeof ex != "string") sandbox.Logger.exception(ex, "AScript script");
+			if (typeof ex != "string") sandbox.context.Logger.exception(ex, "AScript script");
 			data = [];
 			data.invalid = typeof ex == "string" ? ex : "Exception: " + (ex.stack.replace("vm.js",filename) || "Invalid");
 		}
@@ -346,7 +346,7 @@ Object.extend(AScript.prototype, {
 
         if (props.beforeCmd) {
             try {
-                Components.utils.evalInSandbox(data, sp);
+                vm.runInContext(data, sp);
                 data = sandbox.cmdSequence;
                 data.forEach((item)=>{item.beforeCmd = true});
                 this._data.splice(0, 0, ...data);
@@ -359,7 +359,7 @@ Object.extend(AScript.prototype, {
         }
         else if (typeof data == "string") {
             try {
-                Components.utils.evalInSandbox(data, sandbox, "1.8", filename || "<AScript>", 1);
+                vm.runInContext(data, sandbox, "1.8", filename || "<AScript>", 1);
                 data = sandbox.cmdSequence;
             } catch(ex){
                 sp.Logger.exception(ex, "AScript script");

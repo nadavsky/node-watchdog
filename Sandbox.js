@@ -1,35 +1,38 @@
 
-var {VM}=require("vm2");
+var vm=require("vm");
 var fs=require("fs");
 var request = require('sync-request');
 const { URL } = require('url');
 
 function Sandbox(url,topSandbox){
 
-    var _sandox = this._sandox = new VM({
+
+    var context = this.context = vm.createContext({
         "nesting" :true,
         "sandbox"	: SandboxPrototype,
         "sandboxName"			: url
     });
 
-    Object.extend(this, SandboxPrototype);
-    Object.extend(this, _sandox.__proto__);
-    Object.extend(this, _sandox);
+    Object.extend(context, SandboxPrototype);
 
 
     this._topSb = topSandbox || this;
 
     this.cmdSequence = this._topSb.cmdSequence || [];
-    _sandox._sandox = _sandox;
-    _sandox._context.cmd = _sandox.options.sandbox.cmd.bind(this);
+    context.context = context;
+    context.cmd = context.cmd.bind(this);
     this.test = topSandbox ?  this._topSb.test : new test();
     this.test._topSb = this._topSb;
-    _sandox.Logger = Object.extend(this, SandboxPrototype.Logger);
+    context.Logger = Object.extend({}, context.Logger);
     var fileMatch = url.match(/([^/\.]*)(\.js)?$/);
-    _sandox._context.Logger.filename = fileMatch ? fileMatch[1].toMinLength(10) : "[unknown] ";
-    _sandox._context.runScript = _sandox.options.sandbox.runScript.bind(this);
-    _sandox._context.require = _sandox.options.sandbox.require.bind(this);
-    this.moduleMap = {}
+    context.Logger.filename = fileMatch ? fileMatch[1].toMinLength(10) : "[unknown] ";
+    context.runScript = context.runScript.bind(this);
+    context.require = context.require.bind(this);
+    this.module = context.module = {
+        url		: url,
+        exports	: {},
+    };
+    this.moduleMap = {};
 
 
     /*var file = fs.readFileSync(url);
@@ -77,13 +80,12 @@ function Sandbox(url,topSandbox){
     this.moduleMap = {}*/
 
 }
-
-SandboxPrototype={
-    _global: {
-
+Sandbox.prototype = {
+    eval(data, url) {
+        return vm.runInContext(data, this.context, {displayErrors:true, filename:this.context.sandboxName});
     },
-
-    eval(data, url) { return this.run(data); },
+}
+SandboxPrototype={
 
     cmdSequence : [],
 
@@ -195,24 +197,24 @@ SandboxPrototype={
         if (!this._topSb.moduleMap[url]) {
             if (!GlobalCache[url]) {
 
-                var res = request('GET', url); //synchronous request
+                var response = request('GET', url); //synchronous request
 
-                if (res.statusCode === 200) {
-                    GlobalCache[url] = request.responseText;
+                if (response.statusCode === 200) {
+                    GlobalCache[url] = response.body.toString('utf-8');
                 } else {
-                    var msg = `require("${url}") - Failed to download module. status=${request.status}`;
+                    var msg = `require("${url}") - Failed to download module. status=${response.status}`;
                     Logger.error(msg);
-                    throw { message : msg , fileName : Components.stack.caller.filename, lineNumber : Components.stack.caller.lineNumber }
+                    throw { message : msg , fileName : "to do : file name", lineNumber : "to do : line number" }
                 }
             }
 
             var sandbox = new Sandbox(url, this._topSb);
             try {
                 var res;
-                sandbox._global.exports = function(obj) { res = obj; };
+                sandbox.context.exports = function(obj) { res = obj; };
                 sandbox.eval(GlobalCache[url], url);
-                this._topSb.moduleMap[url] = res || sandbox._global.module.exports;
-                sandbox._global.exports = null;
+                this._topSb.moduleMap[url] = res || sandbox.context.module.exports;
+                sandbox.context.exports = null;
             } catch(ex) {
                 Logger.error(`require("${url}") - Failed during eval. ex=${ex}`);
                 throw ex;
