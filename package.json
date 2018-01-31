@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "sync-request": "4.1.0",
+    "request": "^2.83.0",
     "vm": "^0.1.0",
     "vm2": "3.5.2"
   }

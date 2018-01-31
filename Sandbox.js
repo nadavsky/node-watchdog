@@ -191,6 +191,9 @@ SandboxPrototype={
             }
 
         }
+        else if (!url.includes(".js")){
+            return require(url)
+        }
         else domain = requireUrl;
         try { url = new URL(url, domain).href; } catch(ex) {}
 
@@ -309,10 +312,13 @@ SandboxPrototype={
                 return retVal;
         }
     },
+    http : require("http"),
+
+    https : require("https"),
 
     getPref : getPref
 }
-var moreProps=["Node","setTimeout","clearTimeout","KeyEvent", "FormData", "File", ""];
+var moreProps=["Node","setTimeout","clearTimeout","KeyEvent", "FormData", "File"];
 moreProps.forEach(function(item){ SandboxPrototype[item] = global[item]; });
 module.exports = Sandbox;
 
