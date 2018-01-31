@@ -237,7 +237,7 @@ Configurator.prototype = {
             var pref_name = ff_pref_obj.pref.split(".").join("_");
             self._prefs[pref_name] = {
                 pref: ff_pref_obj.pref,
-                value: PrefsUtils.get(ff_pref_obj.pref_name),
+                value: PrefsUtils.get(pref_name),
                 default: ff_pref_obj.default,
                 desc: ff_pref_obj.desc,
                 expected: ff_pref_obj.expected,

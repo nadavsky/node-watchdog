@@ -28,7 +28,7 @@ TestMgr = module.exports = {
         console.log("2. Loading Logger");
         global.Logger = new LoggerClass(Configurator.data.logPath, null, Configurator.data.logLevel, null
             ,Configurator.data.logConsoleMode);
-        //process.on('uncaughtException',this.quit)
+        process.on('uncaughtException',this.quit)
 
         //console.log("2*. Some small preparations");
         //TestMgr._exceptionRecorder.start();
