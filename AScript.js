@@ -330,7 +330,7 @@ Object.extend(AScript.prototype, {
         if(isTop){
             this.sandbox.test.dispatch("topScript/exit", { errors : this._errors.errors});
         }
-        console.log("_do script end with " + this.topScript.stack.toString())
+        Logger.trace("_do script end with " + this.topScript.stack.toString())
         EventBus.dispatch("script/end", this.topScript.stack.toString(),  { retVal : this._errors ,top: isTop, testData: testData});
     },
 
