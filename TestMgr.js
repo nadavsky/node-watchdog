@@ -5,6 +5,8 @@ var _Configurator= require("./Configurator");
 var LoggerClass= require("./Logger");
 var Loader= require("./Loader");
 var RunnableTest= require("./RunnableTest");
+var Reporter= require("./Reporter");
+var fs = require("fs");
 
 
 TestMgr = module.exports = {
@@ -28,7 +30,7 @@ TestMgr = module.exports = {
         console.log("2. Loading Logger");
         global.Logger = new LoggerClass(Configurator.data.logPath, null, Configurator.data.logLevel, null
             ,Configurator.data.logConsoleMode);
-        //process.on('uncaughtException',this.quit)
+        process.on('uncaughtException',this.quit)
 
         //console.log("2*. Some small preparations");
         //TestMgr._exceptionRecorder.start();
@@ -216,7 +218,7 @@ TestMgr = module.exports = {
             });
         }
         else {
-            //TestMgr.printResults();
+            TestMgr.printResults();
             TestMgr.dispatch("postTasks/end");
         }
     },
@@ -229,32 +231,32 @@ TestMgr = module.exports = {
     printResults(){
         function printFile(fileName, data ){
             function createFile(name, outputDir){
-                var snapshotFile = window.FileIO.open(window.DirIO.append(outputDir, name).path);
-                if (snapshotFile.exists()) window.FileIO.unlink(snapshotFile);
+                var snapshotFile = fs.openSync(fs.appendFileSync(outputDir, name).path);
+                if (snapshotFile.exists()) fs.unlink(snapshotFile);
                 return snapshotFile;
             }
             var logFile = createFile(`${fileName}`, outputDir);
             if(Array.isArray(data)){
-                data.forEach(function(datapiece){window.FileIO.writeConvert(logFile, `${datapiece}` + "\n", "a");})
+                data.forEach(function(datapiece){fs.WriteStream(logFile, `${datapiece}` + "\n", "a");})
             }
-            else window.FileIO.writeConvert(logFile, data, logFile.exists() ? "a" : undefined, "utf8");
+            else fs.WriteStream(logFile, data, logFile.exists() ? "a" : undefined, "utf8");
         }
 
 
-        var reporter = new Reporter(TestMgr.Tests, "watchdog",Configurator.ff_prefs["watchdog_outputPath"].value);
+        var reporter = new Reporter(TestMgr.Tests, "watchdog",Configurator._prefs["watchdog_outputPath"].value || process.env.HOME + "/watchdog");
         var result = reporter.generateJenkinsReport();
-
-        var outputDir = window.DirIO.open(Configurator.ff_prefs["watchdog_outputPath"].value) || window.DirIO.get("Home");
-        var outputFile = window.DirIO.append(outputDir, "watchdog.xml");
-        if (outputFile.exists()) window.FileIO.unlink(outputFile);
-        window.FileIO.write(outputFile, result, outputFile.exists() ? "a" : undefined, "utf8");
+        var outputDir= Configurator._prefs["watchdog_outputPath"].value || process.env.HOME + "/watchdog"
+        if(!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
+        var outputFile = fs.openSync(outputDir + "/watchdog.xml","a");
+        if (fs.existsSync(outputDir)) fs.ftruncateSync(outputFile);
+        fs.writeFileSync(outputFile, result, fs.existsSync() ? "a" : undefined, "utf8");
         
         TestMgr.Tests.forEach((test)=>{
             Object.keys(test.test.results.collectData).forEach((key)=>{
                 printFile(key, test.test.results.collectData[key]);
             })
         });
-        stdout("printResults - end.  " + (Configurator._prefs["watchdog_outputPath"].value || window.DirIO.get("Home") || "none"));
+        stdout("printResults - end.  " + (Configurator._prefs["watchdog_outputPath"].value || process.env.HOME + "/watchdog" || "none"));
     },
 
     runInSelectedMode(){
@@ -379,7 +381,7 @@ TestMgr = module.exports = {
 
 function stdout(msg, test, noTimestamp) {
     if (!noTimestamp) msg = "[" + (new Date()).toTimeString().substr(0,8) + "] " + msg;
-    dump(msg + "\n");
+    //dump(msg + "\n");
     console.log(msg + "\n");
 }
 

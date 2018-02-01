@@ -110,7 +110,6 @@ SandboxPrototype={
         },
 
         getCallerLinerNumber : function(deep){
-            debugger;
             var val = ((new Error().stack).split("at ")[deep]).trim();
             val = val.substring(val.indexOf(":")+1,val.lastIndexOf(":"));
             return val;
