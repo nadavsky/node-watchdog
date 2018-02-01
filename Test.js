@@ -27,6 +27,7 @@ Test.prototype= {
         this.props = props;
         if (this.invalid) return skipWithError("Skipping invalid test: " + this.name + " Error: " + this.invalid + "\n");
         this._prepareToRun(function(){
+            console.log("=========================test '" + $this.name + "' (" + $this.id + ") start===========================");
             $this.stdout("Running test: " + $this.name + " ... from (" + $this.path + ")");
             $this.compiledScript.run({},from && $this.compiledScript._data[from - 1], to && $this.compiledScript._data[to - 1]);
             EventBus.dispatch("test/start", $this.id,{startTime : $this.startTime});
