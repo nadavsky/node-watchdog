@@ -245,7 +245,7 @@ Configurator.prototype = {
                 must: ff_pref_obj.must
             }
         });
-        var path = this._prefs["watchdog_path"].value || this._prefs["watchdog_path"].default;
+        var path = (this._prefs["watchdog_path"].value = process.argv[2] || PrefsUtils.get("watchdog_path")) || this._prefs["watchdog_path"].default;
         path = path.split(",")[0];
         this._prefs["watchdog_path"].current_path = path;
     },
