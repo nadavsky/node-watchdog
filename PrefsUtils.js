@@ -9,6 +9,7 @@ module.exports = {
         try {
             var prefs_config = fs.readFileSync(process.env.HOME  + "/watchdog/config.json", 'utf8');
             prefsObj = JSON.parse(prefs_config);
+            Object.extend(prefsObj,global.command);
             return prefsObj[pref];
         } catch(ex) { }
     },
