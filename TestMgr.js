@@ -202,6 +202,7 @@ TestMgr = module.exports = {
         else {
             setTimeout(function(){TestMgr.runTest(TestMgr.TestsIdsQueueForRun.pop())},0) //this timeout solves the sync issue between two tests and allow clearAll func (from Test.js)to invoke
         }
+        Logger.dumpSync();
     },
 
     sendError(msg,errorLevel){
@@ -264,7 +265,10 @@ TestMgr = module.exports = {
         if(Configurator.data.watchdogMode == "auto"){
             console.log("5. In auto modeee");
             //UiController.Dispatcher.trigger("select/all/tests");
-            TestMgr._onTestsRun([100]) //UiController.Dispatcher.trigger("run/selected/tests");
+            var testsIds = TestMgr.Tests.map((model)=>{
+                return model.test.id;
+            });
+            TestMgr._onTestsRun(testsIds) //UiController.Dispatcher.trigger("run/selected/tests");
         }
         else {
             //just wait ...

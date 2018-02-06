@@ -23,7 +23,7 @@ function LoggerClass (outputPath, filename, debugLevel,suffix = ".log", consoleM
     }
     instance = this;
     this.writeHeader();
-    setInterval(this.dump.bind(this), 3000);
+    setInterval(this.dump.bind(this), 2000);
 }
 
 LoggerClass.prototype =  {

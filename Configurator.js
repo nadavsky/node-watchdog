@@ -156,15 +156,15 @@ Configurator.prototype = {
             return [path]
         }
         else {
-            return fs.readSync(fs.openSync(path))
+            return fs.readdirSync(path)
                 .filter(function (file) {
-                    return file.path.endsWith("js")
+                    return file.endsWith("js")
                 })
                 .sort(function (a, b) {
-                    return a.leafName.localeCompare(b.leafName);
+                    return a.localeCompare(b);
                 })
                 .map((file) => {
-                    return file.path
+                    return path+"/"+file
                 })
         }
     },
@@ -224,7 +224,7 @@ Configurator.prototype = {
     prepareLoggerConfig() {
         this.data = {
             "errors": [],
-            "logPath": (this._prefs["watchdog_outputPath"] && this._prefs["watchdog_outputPath"].value) || !fs.existsSync(process.env.HOME + "/watchdog") ? fs.mkdirSync(process.env.HOME  + "/watchdog") : "" ,
+            "logPath": (this._prefs["watchdog_outputPath"] && this._prefs["watchdog_outputPath"].value) || !fs.existsSync(process.env.HOME + "/watchdog") ? fs.mkdirSync(process.env.HOME  + "/watchdog") : process.env.HOME  + "/watchdog/" ,
             "logLevel": (this._prefs["watchdog_logLevel"] && this._prefs["watchdog_logLevel"].value) || "DEBUG",
             "logConsoleMode": (this._prefs["watchdog_logConsoleMode"] && this._prefs["watchdog_logConsoleMode"].value) || false,
             "localMode": (this._prefs["watchdog_local"] && this._prefs["watchdog_local"].value) || false
