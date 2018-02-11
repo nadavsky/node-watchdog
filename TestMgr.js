@@ -30,7 +30,7 @@ TestMgr = module.exports = {
         console.log("2. Loading Logger");
         global.Logger = new LoggerClass(Configurator.data.logPath, null, Configurator.data.logLevel, null
             ,Configurator.data.logConsoleMode);
-        process.on('uncaughtException',this.quit)
+        process.on('uncaughtException',(err)=>{this.quit(err)})
 
         //console.log("2*. Some small preparations");
         //TestMgr._exceptionRecorder.start();
@@ -344,11 +344,11 @@ TestMgr = module.exports = {
         cb();
     },
 
-    quit : function() {
+    quit : function(err) {
+        err ? console.log(err.stack) : null ;
         Logger.dumpSync();
         setTimeout(function(){
             process.exit()
-            //Services.startup.quit(Services.startup.eForceQuit);
         }, 100);
     },
 

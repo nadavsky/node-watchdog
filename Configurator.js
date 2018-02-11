@@ -3,6 +3,8 @@ const TEST_DONT_RUN_SIGN = "!";
 
 defaultPrefs=require("./defaultPrefs");
 PrefsUtils=require("./PrefsUtils");
+var syncRequest = require('sync-request');
+var request = require('request');
 var fs = require('fs');
 
 
@@ -48,42 +50,47 @@ Configurator.prototype = {
     createRequest(uri, requestParams) {
         var numberOfRetries = requestParams.numberOfRetries || 1;
         var maxNumberOfRetries = requestParams.numberOfRetries || 1;
+        var response={};
         prepareXHR();
 
         function prepareXHR() {
-            var xhr = new XMLHttpRequest();
 
-            if (!requestParams.sync && requestParams.timeout) {
-                console.log("This is avery strange request :( . Sync + Timeout ?!");
-            }
 
-            if (requestParams.timeout) {
+            /*if (requestParams.timeout) {
                 var timerId = setTimeout(function () {
-                    xhr.abort();
                     _finishRequest(true);
                 }, requestParams.timeout);
+            }*/
+
+            var headers = requestParams.header ? {'Content-Type': 'application/json; charset=utf-8'} : null
+            if(requestParams.sync){
+                response=syncRequest(requestParams.method,uri,{
+                    "Content-Type": "application/json; charset=utf-8",
+                    "maxRetries": maxNumberOfRetries,
+                    "timeout":requestParams.timeout,
+                    "headers" :headers
+                });
+
+                response.body ? response.body = response.body.toString('utf-8') : null;
+                _finishRequest()
+            }
+            else {
+                request({
+                    // will be ignored
+                    method: requestParams.method,
+                    uri: uri,
+                    headers: headers
+                }, (error, res, body) => {
+                    if (error) _finishRequest(true);
+                    if (res && res.statusCode == 200) {
+                        response =res;
+                        _finishRequest();
+                    }
+                })
             }
 
-            xhr.addEventListener("error", function () {
-                xhr.removeEventListener("error", arguments.callee);
-                _finishRequest(true);
-            }, false);
 
-            xhr.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    clearTimeout(timerId);
-                    _finishRequest();
-                }
-            }
-
-            xhr.open(requestParams.method, uri, requestParams.sync && true);
-
-            if (requestParams.header) {
-                xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-            }
-
-            console.log(`>> Sending xhr ${requestParams.method} request ${uri}  retry .... ${(maxNumberOfRetries - numberOfRetries) > 0 } data : ${requestParams.data ? JSON.stringify(requestParams.data) : "no data"}`);
-            requestParams.data ? xhr.send(JSON.stringify(requestParams.data)) : xhr.send();
+            console.log(`>> Sending xhr ${requestParams.method} request ${uri}  retry .... ${(maxNumberOfRetries - numberOfRetries) > 0 }`);
 
             function _finishRequest(wasError, aborted) {
                 numberOfRetries--;
@@ -91,10 +98,10 @@ Configurator.prototype = {
                     prepareXHR();
                 }
                 else {
-                    console.log("<< Sending xhr received. Status: " + xhr.status + " statusText : " + xhr.statusText);
-                    if (aborted) requestParams.callback(xhr.status, xhr.response);
-                    else if (wasError) requestParams.callback(xhr.status, "aborted !!!");
-                    else requestParams.callback(xhr.status, xhr.response);
+                    console.log("<< Sending xhr received. Status: " + response.statusCode + " statusText : " + response.statusMessage);
+                    //if (aborted) requestParams.callback(xhr.status, xhr.response);
+                    if (wasError) requestParams.callback(response.statusCode, "aborted !!!");
+                    else requestParams.callback(response.statusCode, response.body);
                 }
             }
         }
@@ -117,7 +124,7 @@ Configurator.prototype = {
                     return tests_arr_res;
                 }
             }
-            console.log(`URL : ${url}, STATUS : ${status}, RESPONSE : ${response}`);
+            //console.log(`URL : ${url}, STATUS : ${status}, RESPONSE : ${response}`);
             return tests_arr_res;
         }
 
@@ -125,7 +132,8 @@ Configurator.prototype = {
             "method": "GET",
             "timeout": 10000,
             "numberOfRetries": 2,
-            "callback": checkTheResponse
+            "callback": checkTheResponse,
+            "sync":true
         });
         return tests_arr_res;
 

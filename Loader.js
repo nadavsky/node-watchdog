@@ -1,4 +1,5 @@
 var fs=require("fs")
+var syncRequest = require('sync-request');
 
 function Loader(path){
     if(Array.isArray(path)) {
@@ -46,10 +47,8 @@ Loader.prototype = {
          }
 
         function loadFileFromTheServer(path){
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", path, false);
-            xhr.send();
-            buildDataInput(xhr.responseText, path, path.substr(path.lastIndexOf('/') + 1));
+            var response = syncRequest("GET", path);
+            buildDataInput(response.body.toString('utf-8'), path, path.substr(path.lastIndexOf('/') + 1));
         }
 
         this.arrayOfPaths.forEach((path) => {
