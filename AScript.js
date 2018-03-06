@@ -134,7 +134,7 @@ global.AScript = function(data, topScript, parentAction, filename, id, beforeCmd
         } catch(ex){
 			if (typeof ex != "string") sandbox.context.Logger.exception(ex, "AScript script");
 			data = [];
-			data.invalid = typeof ex == "string" ? ex : "Exception: " + (ex.stack.replace("vm.js",filename) || "Invalid");
+			data.invalid = typeof ex == "string" ? ex : "Exception: " + (ex.stack && ex.stack.replace("vm.js",filename) || "Invalid Script");
 		}
     }
 	this._data = data || [];
