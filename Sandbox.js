@@ -114,9 +114,6 @@ SandboxPrototype={
             val = val.substring(val.indexOf(":")+1,val.lastIndexOf(":"));
             return val;
         }
-
-
-        //getPref : getPref,
     },
 
     Logger : {
@@ -323,19 +320,12 @@ SandboxPrototype={
 
     https : require("https"),
 
-    getPref : getPref
+    getPref : global.PrefsUtils.get
 }
 var moreProps=["Node","setTimeout","clearTimeout","KeyEvent", "FormData", "File"];
 moreProps.forEach(function(item){ SandboxPrototype[item] = global[item]; });
 module.exports = Sandbox;
 
-function getPref(pref, ifc) {
-    try {
-        var prefs_config = fs.readFileSync(process.env.HOME  + "/watchdog/config.json", 'utf8');
-        prefsObj = JSON.parse(prefs_config);
-        return prefsObj[pref];
-    } catch(ex) { }
-}
 function test(){
 
     this.on = function(eventType, cb, isCmd){
@@ -402,7 +392,7 @@ function test(){
     this.zappId  = "create a zapp first";
 }
 var GlobalCache = {};
-var requireUrl = getPref("watchdog.requireUrl") || "http://127.0.0.1/other/watchdog-components/";
+var requireUrl = PrefsUtils.get("watchdog_requireUrl") //|| "http://127.0.0.1/other/watchdog-components/";
 var __then = function(onFulfilled, onRejected){
     if (onFulfilled) this.onFulfilled = onFulfilled;
     if (onRejected) this.onRejected = onRejected;

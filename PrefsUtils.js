@@ -4,12 +4,14 @@ var fs= require("fs");
 
 
 module.exports = {
-
     get : function(pref, ifc) {
         try {
-            var prefs_config = fs.readFileSync(process.env.HOME  + "/watchdog/config.json", 'utf8');
-            prefsObj = JSON.parse(prefs_config);
-            Object.extend(prefsObj,global.command);
+            prefsObj= global.command;
+            let path = process.env.HOME  + "/watchdog/config.json";
+            if(fs.existsSync(path)){
+                var prefs_config = fs.readFileSync(path , 'utf8');
+                Object.extend(prefsObj,JSON.parse(prefs_config));
+            }
             return prefsObj[pref];
         } catch(ex) { }
     },

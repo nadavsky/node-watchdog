@@ -2,7 +2,6 @@ const WATCHDOG_URL = "http://127.0.0.1/other/watchdog-components/";
 const TEST_DONT_RUN_SIGN = "!";
 
 defaultPrefs=require("./defaultPrefs");
-PrefsUtils=require("./PrefsUtils");
 var syncRequest = require('sync-request');
 var request = require('request');
 var fs = require('fs');
