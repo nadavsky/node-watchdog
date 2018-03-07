@@ -18,6 +18,6 @@ options:
 
 --watchdog_logConsoleMode "TRUE - writes to the console, FALSE(default) - writes to output file" 
 
---watchdog.requireUrl base url of watchodg components
+--watchdog_requireUrl base url of watchodg components
 
 
