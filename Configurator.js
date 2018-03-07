@@ -34,7 +34,7 @@ Configurator.prototype = {
         var testBaseUrl = this._prefs["watchdog_testsArrayBaseUrl"].value || WATCHDOG_URL;
 
         try {
-            var testsArr = JSON.parse(tests);
+            var testsArr = tests//JSON.parse(tests);
             tests_arr_res = (testPart > -1) ? testsArr[testPart] : testsArr;
             tests_arr_res = this._format_tests_urls(testBaseUrl, tests_arr_res);
             return tests_arr_res;
@@ -224,7 +224,7 @@ Configurator.prototype = {
                 arr_tests = this._loadTestsFromDir();
             }
         }
-        console.log("Tests to load " + arr_tests);
+        arr_tests.length ? console.log("Tests to load " + arr_tests) : console.log("-=-=-=-= there is no tests to load =-=-=-=-=-");
         return arr_tests;
     },
 

@@ -9,7 +9,7 @@ module.exports = [
     },
     {   "pref"    : "watchdog.path",
         "desc"    : "",
-        "default" : PrefsUtils.get("watchdog_path"),
+        "default" : PrefsUtils.get("watchdog_path") || "",
         "expected": '"string","string"',
         "ui"      : true
 
