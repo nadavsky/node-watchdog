@@ -13,7 +13,7 @@ module.exports = {
                 Object.extend(prefsObj,JSON.parse(prefs_config));
             }
             return prefsObj[pref];
-        } catch(ex) { }
+        } catch(ex) { console.log(ex)}
     },
 
     set : function(pref, value, type, keepOldValue) {
