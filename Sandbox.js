@@ -21,7 +21,7 @@ function Sandbox(url,topSandbox){
     this.cmdSequence = this._topSb.cmdSequence || [];
     context.context = context;
     context.cmd = context.cmd.bind(this);
-    this.test = topSandbox ?  this._topSb.test : new test();
+    context.test = this.test = topSandbox ?  this._topSb.test : new test();
     this.test._topSb = this._topSb;
     context.Logger = Object.extend({}, context.Logger);
     var fileMatch = url.match(/([^/\.]*)(\.js)?$/);
