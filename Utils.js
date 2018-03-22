@@ -368,6 +368,9 @@ Utils = module.exports = {
             } else {
                 return str;
             }
+        },
+        getUserHome: function() {
+            return process.platform === 'win32' ? process.env.USERPROFILE : process.env.HOME ;
         }
     }
 

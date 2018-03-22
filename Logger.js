@@ -48,7 +48,7 @@ LoggerClass.prototype =  {
     },
 
     _initOutputFiles(){
-        var path = this.path ?  this.path :  process.env.HOME + Utils.OS.slashFormatter("/watchdog");
+        var path = this.path ?  this.path :  Utils.OS.getUserHome() + Utils.OS.slashFormatter("/watchdog");
         if(!fs.existsSync(path)) fs.mkdirSync(path);
         fs.appendFileSync(path+ Utils.OS.slashFormatter("/") +this.filename);
         this.outputDir    =  path;
