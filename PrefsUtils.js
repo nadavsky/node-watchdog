@@ -7,7 +7,7 @@ module.exports = {
     get : function(pref, ifc) {
         try {
             prefsObj= global.command;
-            let path = process.env.HOME  + "/watchdog/config.json";
+            let path = process.env.HOME  + Utils.OS.slashFormatter("/watchdog/config.json");
             if(fs.existsSync(path)){
                 var prefs_config = fs.readFileSync(path , 'utf8');
                 Object.extend(prefsObj,JSON.parse(prefs_config));

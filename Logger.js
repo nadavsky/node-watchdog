@@ -44,15 +44,15 @@ LoggerClass.prototype =  {
     },
 
     get filePath(){
-        return (this.path + "/" + this.filename);
+        return (this.path + Utils.OS.slashFormatter("/") + this.filename);
     },
 
     _initOutputFiles(){
-        var path = this.path ?  this.path :  process.env.HOME + "/watchdog";
+        var path = this.path ?  this.path :  process.env.HOME + Utils.OS.slashFormatter("/watchdog");
         if(!fs.existsSync(path)) fs.mkdirSync(path);
-        fs.appendFileSync(path+"/"+this.filename);
+        fs.appendFileSync(path+ Utils.OS.slashFormatter("/") +this.filename);
         this.outputDir    =  path;
-        this.outputFile   =  fs.openSync(path+"/"+this.filename,'a');
+        this.outputFile   =  fs.openSync(path + Utils.OS.slashFormatter("/") + this.filename,'a');
         fs.ftruncateSync(this.outputFile);
     },
 

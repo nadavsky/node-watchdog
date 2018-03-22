@@ -62,11 +62,11 @@ Reporter.prototype = {
                 "message" : failure });
         });
 
-        var logPath = `${this.reportPath}/${test.name}.log`;
+        var logPath = `${this.reportPath}${Utils.OS.slashFormatter("/")}${test.name}.log`;
         if (test.results.stdout.length > 0) {
             //var data = `${test.results.stdout.join("\n")}\n\nError image :\n[[ATTACHMENT|${logPath}]]\n${Object.keys(test.results.collectData).map(key => {return `[[ATTACHMENT|${this.reportPath}/${key}]]\n`}).toString().replace(",","")}`;
             test.results.stdout.forEach((item, i, arr)=>{
-                if(item.includes("[error.image]")) arr[i] = `Error image:\n[[ATTACHMENT|${this.reportPath}/${arr[i]}]]\n\n`;
+                if(item.includes("[error.image]")) arr[i] = `Error image:\n[[ATTACHMENT|${this.reportPath+Utils.OS.slashFormatter("/")}${arr[i]}]]\n\n`;
                 data[i] = arr[i];
             });
             data[data.length]= `Log file:\n[[ATTACHMENT|${logPath}]]\n`;

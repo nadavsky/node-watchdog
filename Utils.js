@@ -156,6 +156,7 @@ Object.extend(Function.prototype, {
 }, { enumerable : false });
 
 
+
 (function(){
 
     const __listeners__ = '__listeners__';
@@ -355,3 +356,19 @@ Object.extend(Function.prototype, {
     }
 
 }());
+
+
+Utils = module.exports = {
+    OS:{
+        slashFormatter: function(str) {
+            if (process.platform === 'win32') {
+                str = str.replace(/^\//, '');
+                str = str.replace(/\//g, '-');
+                return '\\\\.\\pipe\\'+str;
+            } else {
+                return str;
+            }
+        }
+    }
+
+}

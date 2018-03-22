@@ -9,4 +9,5 @@ for(var i = 2 ; i < process.argv.length ; i++){
     }
 }
 var TestMgr = require("./TestMgr");
+
 TestMgr.init();

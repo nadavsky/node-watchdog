@@ -244,11 +244,11 @@ TestMgr = module.exports = {
         }
 
 
-        var reporter = new Reporter(TestMgr.Tests, "watchdog",Configurator._prefs["watchdog_outputPath"].value || process.env.HOME + "/watchdog");
+        var reporter = new Reporter(TestMgr.Tests, "watchdog",Configurator._prefs["watchdog_outputPath"].value || process.env.HOME + Utils.OS.slashFormatter("/") + "watchdog");
         var result = reporter.generateJenkinsReport();
-        var outputDir= Configurator._prefs["watchdog_outputPath"].value || process.env.HOME + "/watchdog"
+        var outputDir= Configurator._prefs["watchdog_outputPath"].value || process.env.HOME + Utils.OS.slashFormatter("/") + "watchdog"
         if(!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
-        var outputFile = fs.openSync(outputDir + "/watchdog.xml","a");
+        var outputFile = fs.openSync(outputDir + Utils.OS.slashFormatter("/") + "watchdog.xml","a");
         if (fs.existsSync(outputDir)) fs.ftruncateSync(outputFile);
         fs.writeFileSync(outputFile, result, fs.existsSync() ? "a" : undefined, "utf8");
         
@@ -257,7 +257,7 @@ TestMgr = module.exports = {
                 printFile(key, test.test.results.collectData[key]);
             })
         });
-        stdout("printResults - end.  " + (Configurator._prefs["watchdog_outputPath"].value || process.env.HOME + "/watchdog" || "none"));
+        stdout("printResults - end.  " + (Configurator._prefs["watchdog_outputPath"].value || process.env.HOME + Utils.OS.slashFormatter("/") + "watchdog" || "none"));
     },
 
     runInSelectedMode(){

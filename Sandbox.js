@@ -377,7 +377,7 @@ function test(){
     this.eventsMap = {};
 
     this.name = function(){
-        if(this.testPath().indexOf("/") != -1)
+        if(this.testPath().indexOf(Utils.OS.slashFormatter("/")) != -1)
             return this.testPath().match(/([^/]*(?=\.js))|([^/]*$)/)[0];
         else
             return this.testPath().match(/[^\\]*(?=\.js)/)[0];

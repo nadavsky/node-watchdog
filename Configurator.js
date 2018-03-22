@@ -34,7 +34,7 @@ Configurator.prototype = {
         var testBaseUrl = this._prefs["watchdog_testsArrayBaseUrl"].value || WATCHDOG_URL;
 
         try {
-            var testsArr = tests//JSON.parse(tests);
+            var testsArr = tests //JSON.parse(tests);
             tests_arr_res = (testPart > -1) ? testsArr[testPart] : testsArr;
             tests_arr_res = this._format_tests_urls(testBaseUrl, tests_arr_res);
             return tests_arr_res;
@@ -140,7 +140,7 @@ Configurator.prototype = {
 
     _loadTestsTestPath() {
         var testsPath = this._prefs["watchdog_testsUrl"].value;
-        var basePath = testsPath.substr(0, testsPath.lastIndexOf("/") + 1);
+        var basePath = testsPath.substr(0, testsPath.lastIndexOf(Utils.OS.slashFormatter("/")) + 1);
         var testJSON = window.FileIO.read(window.FileIO.open(testsPath), "utf8");
 
         if (testJSON) {
@@ -171,7 +171,7 @@ Configurator.prototype = {
                     return a.localeCompare(b);
                 })
                 .map((file) => {
-                    return path+"/"+file
+                    return path+ Utils.OS.slashFormatter("/") +file
                 })
         }
     },
@@ -231,7 +231,7 @@ Configurator.prototype = {
     prepareLoggerConfig() {
         this.data = {
             "errors": [],
-            "logPath": (this._prefs["watchdog_outputPath"] && this._prefs["watchdog_outputPath"].value) || !fs.existsSync(process.env.HOME + "/watchdog") ? fs.mkdirSync(process.env.HOME  + "/watchdog") : process.env.HOME  + "/watchdog/" ,
+            "logPath": (this._prefs["watchdog_outputPath"] && this._prefs["watchdog_outputPath"].value) || !fs.existsSync(process.env.HOME + Utils.OS.slashFormatter("/") + "watchdog") ? fs.mkdirSync(process.env.HOME  + Utils.OS.slashFormatter("/") + "watchdog") : process.env.HOME  + Utils.OS.slashFormatter("/") + "watchdog" + Utils.OS.slashFormatter("/") ,
             "logLevel": (this._prefs["watchdog_logLevel"] && this._prefs["watchdog_logLevel"].value) || "DEBUG",
             "logConsoleMode": (this._prefs["watchdog_logConsoleMode"] && this._prefs["watchdog_logConsoleMode"].value) || false,
             "localMode": (this._prefs["watchdog_local"] && this._prefs["watchdog_local"].value) || false
