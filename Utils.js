@@ -362,9 +362,8 @@ Utils = module.exports = {
     OS:{
         slashFormatter: function(str) {
             if (process.platform === 'win32') {
-                str = str.replace(/^\//, '');
-                str = str.replace(/\//g, '-');
-                return '\\\\.\\pipe\\'+str;
+                str = str.replace(/\//, '\\');
+                return str;
             } else {
                 return str;
             }

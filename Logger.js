@@ -49,11 +49,13 @@ LoggerClass.prototype =  {
 
     _initOutputFiles(){
         var path = this.path ?  this.path :  Utils.OS.getUserHome() + Utils.OS.slashFormatter("/watchdog");
+        var filePath = path + Utils.OS.slashFormatter("/") +this.filename;
         if(!fs.existsSync(path)) fs.mkdirSync(path);
-        fs.appendFileSync(path+ Utils.OS.slashFormatter("/") +this.filename);
+        if(!fs.existsSync(filePath)) fs.appendFileSync(filePath,"");
+        else fs.unlinkSync(path + Utils.OS.slashFormatter("/") +this.filename )
         this.outputDir    =  path;
         this.outputFile   =  fs.openSync(path + Utils.OS.slashFormatter("/") + this.filename,'a');
-        fs.ftruncateSync(this.outputFile);
+        //fs.appendFileSync(this.outputFile);
     },
 
     _supportedLevels(){
