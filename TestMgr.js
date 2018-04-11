@@ -248,9 +248,11 @@ TestMgr = module.exports = {
         var result = reporter.generateJenkinsReport();
         var outputDir= Configurator._prefs["watchdog_outputPath"].value || Utils.OS.getUserHome() + Utils.OS.slashFormatter("/") + "watchdog"
         if(!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
-        var outputFile = fs.openSync(outputDir + Utils.OS.slashFormatter("/") + "watchdog.xml","a");
-        if (fs.existsSync(outputDir)) fs.ftruncateSync(outputFile);
-        fs.writeFileSync(outputFile, result, fs.existsSync() ? "a" : undefined, "utf8");
+        var filePath = outputDir + Utils.OS.slashFormatter("/") + "watchdog.xml";
+        if(!fs.existsSync(filePath)) fs.appendFileSync(filePath,"");
+        else fs.unlinkSync(filePath);
+        fs.openSync(filePath,'a');
+        fs.appendFileSync(filePath, result, fs.existsSync() ? "a" : undefined, "utf8");
         
         TestMgr.Tests.forEach((test)=>{
             Object.keys(test.test.results.collectData).forEach((key)=>{
