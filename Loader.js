@@ -39,7 +39,7 @@ Loader.prototype = {
         function loadFileFromOS(path) {
              console.log("[Loader] The file is saved at the file system");
              if(fs.existsSync(path)){
-                 fs.readFile(path,'utf8', (err,data)=>{buildDataInput(data,path, path.substr(path.lastIndexOf('/') + 1))})
+                 fs.readFile(path,'utf8', (err,data)=>{buildDataInput(data,path, path.substr(path.lastIndexOf(Utils.OS.slashFormatter("/")) + 1))})
              }
              else {
                  callbackFunc([],"The path " + path + " no longer exist");
