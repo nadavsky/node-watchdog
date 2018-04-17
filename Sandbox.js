@@ -320,7 +320,9 @@ SandboxPrototype={
 
     https : require("https"),
 
-    getPref : global.PrefsUtils.get
+    getPref : global.PrefsUtils.get,
+
+    setPref : global.PrefsUtils.set
 }
 var moreProps=["Node","setTimeout","clearTimeout","KeyEvent", "FormData", "File"];
 moreProps.forEach(function(item){ SandboxPrototype[item] = global[item]; });

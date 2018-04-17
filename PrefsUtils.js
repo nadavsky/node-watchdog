@@ -17,39 +17,20 @@ module.exports = {
     },
 
     set : function(pref, value, type, keepOldValue) {
-        if (pref.indexOf("watchdog.") == -1 || keepOldValue) {
-            try { var origPrefs = JSON.parse(pref.getPref("extensions.origPrefs")) } catch(ex) {};
-            if (origPrefs && origPrefs[pref] === undefined) {
-                var origVal = pref.getPref(pref);
-                origPrefs[pref] = origVal === undefined ? null : origVal;
+        try {
+            prefsObj= global.command;
+            var path = Utils.OS.getUserHome()  + Utils.OS.slashFormatter("/watchdog/config.json");
+            if(fs.existsSync(path)){
+                var prefs_config = fs.readFileSync(path , 'utf8');
+                Object.extend(prefsObj,JSON.parse(prefs_config));
             }
+            else throw "there is no config file"
+        } catch(ex) { console.log(ex)}
+
+        if (value === undefined) delete prefsObj[pref];
+        else {
+            fs.writeFileSync(path,JSON.stringify(prefsObj,null,4));
         }
-
-        if (value === undefined) return prefs.clearUserPref(pref);
-
-        var setPrefMethod;
-        if (type) setPrefMethod = prefs["set".concat(type, "Pref")];
-        else try {
-            switch (prefs.getPrefType(pref)) {
-                case Ci.nsIPrefBranch.PREF_STRING	: setPrefMethod = prefs.setCharPref; break;
-                case Ci.nsIPrefBranch.PREF_INT		: setPrefMethod = prefs.setIntPref; break;
-                case Ci.nsIPrefBranch.PREF_BOOL		: setPrefMethod = prefs.setBoolPref; break;
-            }
-        } catch(ex) {}
-
-        if (!setPrefMethod) {
-            switch (typeof value) {
-                case "string"	: setPrefMethod = prefs.setCharPref; break;
-                case "number"	: setPrefMethod = prefs.setIntPref; break;
-                case "boolean"	: setPrefMethod = prefs.setBoolPref; break;
-            }
-        }
-
-        if (!setPrefMethod) return Logger.error("Utils.setPref: preference type is either not supported or unknown");
-
-        if (origPrefs && origPrefs[pref] !== undefined) pref.setPref("extensions.origPrefs", JSON.stringify(origPrefs));
-
-        setPrefMethod.call(prefs, pref, value);
     },
 
     getChildList : function(pref, obj) {
