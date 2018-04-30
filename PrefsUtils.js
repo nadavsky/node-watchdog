@@ -7,7 +7,7 @@ module.exports = {
     get : function(pref, ifc) {
         try {
             prefsObj= global.command;
-            let path = Utils.OS.getUserHome()  + Utils.OS.slashFormatter("/watchdog/config.json");
+            let path = Utils.OS.slashFormatter("./config.json");
             if(fs.existsSync(path)){
                 var prefs_config = fs.readFileSync(path , 'utf8');
                 Object.extend(prefsObj,JSON.parse(prefs_config));
@@ -19,7 +19,7 @@ module.exports = {
     set : function(pref, value, type, keepOldValue) {
         try {
             prefsObj= global.command;
-            var path = Utils.OS.getUserHome()  + Utils.OS.slashFormatter("/watchdog/config.json");
+            var path = Utils.OS.slashFormatter("./config.json");
             if(fs.existsSync(path)){
                 var prefs_config = fs.readFileSync(path , 'utf8');
                 Object.extend(prefsObj,JSON.parse(prefs_config));
