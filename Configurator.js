@@ -231,7 +231,10 @@ Configurator.prototype = {
     prepareLoggerConfig() {
         this.data = {
             "errors": [],
-            "logPath": (this._prefs["watchdog_outputPath"] && this._prefs["watchdog_outputPath"].value) || !fs.existsSync(Utils.OS.getUserHome() + Utils.OS.slashFormatter("/") + "watchdog") ? fs.mkdirSync(Utils.OS.getUserHome()  + Utils.OS.slashFormatter("/") + "watchdog") : Utils.OS.getUserHome()  + Utils.OS.slashFormatter("/") + "watchdog" + Utils.OS.slashFormatter("/") ,
+            "logPath": (this._prefs["watchdog_outputPath"] && this._prefs["watchdog_outputPath"].value) ?
+                (!fs.existsSync(this._prefs["watchdog_outputPath"].value) ?
+                    fs.mkdirSync(this._prefs["watchdog_outputPath"].value) : this._prefs["watchdog_outputPath"].value
+                ) : Utils.OS.getUserHome()  + Utils.OS.slashFormatter("/") + "watchdog" + Utils.OS.slashFormatter("/") ,
             "logLevel": (this._prefs["watchdog_logLevel"] && this._prefs["watchdog_logLevel"].value) || "DEBUG",
             "logConsoleMode": (this._prefs["watchdog_logConsoleMode"] && this._prefs["watchdog_logConsoleMode"].value) || false,
             "localMode": (this._prefs["watchdog_local"] && this._prefs["watchdog_local"].value) || false
