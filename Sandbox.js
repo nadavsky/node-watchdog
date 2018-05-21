@@ -324,7 +324,7 @@ SandboxPrototype={
 
     setPref : global.PrefsUtils.set
 }
-var moreProps=["Node","setTimeout","clearTimeout","KeyEvent", "FormData", "File"];
+var moreProps=["Node","setTimeout","clearTimeout","KeyEvent", "FormData", "File","JSON"];
 moreProps.forEach(function(item){ SandboxPrototype[item] = global[item]; });
 module.exports = Sandbox;
 
