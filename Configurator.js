@@ -262,7 +262,6 @@ Configurator.prototype = {
 
     
     updateFFPrefs(pref, value) {
-        console.log("updated preff " + pref + " ---> value " + value);
         var pref_name = pref.split(".").join("_");
         this._prefs[pref_name] = {
             pref: pref,
