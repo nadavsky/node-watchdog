@@ -212,7 +212,7 @@ Object.extend(AScript.prototype, {
         if (++this._curIndex >= this._data.length && this.topScript == this) {
             dispached = true;
             var dataLength = this._data.length;
-            this.sandbox.test.dispatch("topScript/beforeExit", { errors :this._errors.errors, topScript: this });
+            this.sandbox.test.dispatch("topScript/beforeExit", { errors :this._errors.errors, topScript: this }); // executes only if no fatal error occurred.
         }
 		if ((this._curIndex >= this._data.length) || (this.runUntilAction && this._curIndex-1 == this._data.indexOf(this.runUntilAction))) {
 			this._doScriptEnd();
