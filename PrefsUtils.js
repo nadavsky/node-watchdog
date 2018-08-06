@@ -2,24 +2,27 @@
 
 var fs= require("fs");
 
-
+var prefsObj;
 module.exports = {
     get : function(pref, ifc) {
-        try {
-            prefsObj= global.command;
-            let path = Utils.OS.slashFormatter("./config.json");
-            if(fs.existsSync(path)){
-                var prefs_config = fs.readFileSync(path , 'utf8');
-                Object.extend(prefsObj,JSON.parse(prefs_config));
-            }
-            return prefsObj[pref];
-        } catch(ex) { console.log(ex)}
+        if (!prefsObj){
+            try {
+                prefsObj= global.command;
+                let path = global.command.configPath || Utils.OS.slashFormatter("./config.json");
+                if(fs.existsSync(path)){
+                    var prefs_config = fs.readFileSync(path , 'utf8');
+                    Object.extend(prefsObj,JSON.parse(prefs_config));
+                }
+
+            } catch(ex) { console.log("check your config file!  : " + ex)}
+        }
+        return prefsObj[pref];
     },
 
     set : function(pref, value, type, keepOldValue) {
         try {
             prefsObj= global.command;
-            var path = Utils.OS.slashFormatter("./config.json");
+            var path = global.command.configPath || Utils.OS.slashFormatter("./config.json");
             if(fs.existsSync(path)){
                 var prefs_config = fs.readFileSync(path , 'utf8');
                 Object.extend(prefsObj,JSON.parse(prefs_config));

@@ -47,6 +47,7 @@ Loader.prototype = {
          }
 
         function loadFileFromTheServer(path){
+
             var response = syncRequest("GET", path);
             buildDataInput(response.body.toString('utf-8'), path, path.substr(path.lastIndexOf('/') + 1));
         }

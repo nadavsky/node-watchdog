@@ -321,7 +321,6 @@ TestMgr = module.exports = {
         compileTest(firstTestForCompile);
 
         function compileTest(id){
-            console.log("Comp test "  + id);
             var test = TestMgr.Tests[id];
             if (Configurator._prefs["watchdog_justRun"].value) jrManager.setTestProps(test);
             var runnableTest = new RunnableTest(test, runUntilEx, runFromEx);
