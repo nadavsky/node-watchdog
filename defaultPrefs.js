@@ -3,7 +3,7 @@ module.exports = [
 
     {   "pref"    : "watchdog.outputPath",
         "desc"    : "Logs path",
-        "default" : "",
+        "default" : PrefsUtils.get("watchdog_outputPath") || "",
         "expected": "string",
         "must"    : true
     },
