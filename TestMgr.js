@@ -384,7 +384,7 @@ TestMgr = module.exports = {
 
 
 
-function stdout(msg, test, noTimestamp) {
+global.stdout = function(msg, test, noTimestamp) {
     if (!noTimestamp) msg = "[" + (new Date()).toTimeString().substr(0,8) + "] " + msg;
     //dump(msg + "\n");
     console.log(msg + "\n");

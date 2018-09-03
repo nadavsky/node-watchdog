@@ -266,7 +266,7 @@ Test.prototype= {
     },
     stdout : function(msg,noTimestamp){
         this.results.stdout.push((!noTimestamp ? "[" + (new Date()).toTimeString().substr(0,8) + "] " : "") + msg);
-        console.log(msg,null,noTimestamp);
+        global.stdout(msg,null,noTimestamp);
     },
     abort : function(){
         this.compiledScript.abort("Test aborted");
