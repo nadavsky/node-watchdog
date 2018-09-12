@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "request": "^2.83.0",
-    "sync-request": "4.1.0",
+    "sync-request": "6.0.0",
     "vm": "0.1.0",
     "xmlbuilder": "^9.0.4"
   }
