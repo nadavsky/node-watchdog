@@ -184,6 +184,7 @@ SandboxPrototype={
     },
 
     require: function(url) {
+        Logger.debug("require: loading '" +  url  + "'" )
         var domain;
         if(url[0] == "."){
             if(this.module.url.includes("http")){
