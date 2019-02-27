@@ -26,6 +26,7 @@ module.exports = {
             if(fs.existsSync(path)){
                 var prefs_config = fs.readFileSync(path , 'utf8');
                 Object.extend(prefsObj,JSON.parse(prefs_config));
+                prefsObj[pref]=value;
             }
             else throw "there is no config file"
         } catch(ex) { console.log(ex)}
