@@ -2,7 +2,9 @@
  * Created by nadav on 8/15/16.
  */
 
-var AScript=require("./AScript")
+var AScript=require("./AScript");
+var PrefsUtils = require("./PrefsUtils")
+var request= require("request");
 
 
 global.Test=function Test(testObj){
@@ -170,43 +172,57 @@ Test.prototype= {
 
         $this.results.runtimeTestData.testData = e.testData;
         this.startTime ? this.results.duration = Math.round((Date.now() - this.startTime.getTime()) / 1000) : this.results.duration="no start time";
-       /* if (this.props.cleanTestEnv && (!this.compiledScript._abort || (AScript._abortMsg && (AScript._abortMsg.includes("Script Timeout") || AScript._abortMsg.includes("exit!"))))) closeOpenWindows(end);
-        else end();*/
-        end();
+        if (this.props.cleanTestEnv && (!this.compiledScript._abort || (AScript._abortMsg && (AScript._abortMsg.includes("Script Timeout") || AScript._abortMsg.includes("exit!"))))) closeOpenWindows(end);
+        else end();
+       // end();
 
 
         function closeOpenWindows(callback){
+            function getSessionName(){
+                let sessionsObj = PrefsUtils.get("wildcat_sessions");
+                if (Object.keys(sessionsObj).length > 0) {
+                    let sessionName = Object.keys(sessionsObj)[0];
+                    return sessionName;
+                }
+                else return null;
+            };
+            function buildUrl(relPath){
+                let path = PrefsUtils.get("watchdog.wildcat.appiumIp") || "http://127.0.0.1:9515";
+                if(relPath) path += relPath;
+                return path;
+            };
             $this.stdout("*** next win ***");
-            var curWin;
-            var browserEnum = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator).getEnumerator(null);
+            var curSession;
             var timer = setTimeout(function(){
                 $this.stdout("closeOpenWindows(): failed to close all windows");
                 callback();
             },10000);
+            let sessionName = getSessionName();
             closeNext();
             function closeNext(){
-                if(browserEnum.hasMoreElements()){
-                    curWin=browserEnum.getNext();
-                    console.log("----------------------------------"+curWin.document.title);
-                    curWin.addEventListener("unload",function(){
-                        curWin.removeEventListener("unload",arguments.callee);
-                        closeNext();
-                    });
-                    if($this.winArray.indexOf(curWin) == -1 && !(typeof(curWin.document.title) == "string" && curWin.document.title.includes("Watchdog")) && !(curWin.document.title == "Script Unit tests")){
-                        console.log("*** closing window: " +  curWin.document.title);
-                        curWin.close();
-                    }
-                    else {
-                        $this.winArray.pop($this.winArray.indexOf(curWin));
-                        console.log("*** this win was opened before the test ran: " + curWin.document.title);
-                        closeNext();
-                    }
+                if (sessionName) {
+                    curSession = PrefsUtils.get("wildcat_sessions")[sessionName];
+
+                    //delete session from config.json
+                    var sessionsObj = PrefsUtils.get("wildcat_sessions");
+                    delete sessionsObj[sessionName];
+                    PrefsUtils.set("wildcat_sessions", sessionsObj);
+
+                    //get next session name
+                    sessionName = getSessionName();
+                    console.log("---------------------------------- session to delete - " + curSession);
+                    let url = buildUrl('/session/' + curSession);
+                    request.del(url, function (err, httpResponse, body) {
+                        if (err){
+                            Logger.debug("Failed to delete session - " + curSession + " error - " + err);
+                        }
+                    }, closeNext());
                 }
                 else {
                     clearTimeout(timer);
                     callback();
                 }
-            }
+            };
         }
         function end(){
             console.log("=========================test '" + $this.name + "' (" + $this.id + ") end===========================");
@@ -216,7 +232,7 @@ Test.prototype= {
             EventBus.clearAll($this.id);
 
         }
-    },
+     },
     update : function (data) {
         Logger.trace("test update -----");
         var jsonTest = this.toJson(data);
