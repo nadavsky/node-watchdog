@@ -191,34 +191,35 @@ Test.prototype= {
                 if(relPath) path += relPath;
                 return path;
             };
-            $this.stdout("*** next win ***");
-            var curSession;
-            var timer = setTimeout(function(){
-                $this.stdout("closeOpenWindows(): failed to close all windows");
-                callback();
-            },10000);
-            let sessionName = getSessionName();
-            closeNext();
-            function closeNext(){
+            if(PrefsUtils.get("wildcat_sessions")) {
+                $this.stdout("*** next win ***");
+                var curSession;
+                var timer = setTimeout(function () {
+                    $this.stdout("closeOpenWindows(): failed to close all windows");
+                    callback();
+                }, 10000);
+                var sessionName = getSessionName();
+                closeNext();
+            }
+            else callback();
+
+            function closeNext() {
                 if (sessionName) {
                     curSession = PrefsUtils.get("wildcat_sessions")[sessionName];
-
                     //delete session from config.json
                     var sessionsObj = PrefsUtils.get("wildcat_sessions");
                     delete sessionsObj[sessionName];
                     PrefsUtils.set("wildcat_sessions", sessionsObj);
-
                     //get next session name
                     sessionName = getSessionName();
                     console.log("---------------------------------- session to delete - " + curSession);
                     let url = buildUrl('/session/' + curSession);
                     request.del(url, function (err, httpResponse, body) {
-                        if (err){
+                        if (err) {
                             Logger.debug("Failed to delete session - " + curSession + " error - " + err);
                         }
                     }, closeNext());
-                }
-                else {
+                } else {
                     clearTimeout(timer);
                     callback();
                 }
