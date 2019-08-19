@@ -228,7 +228,7 @@ Object.extend(AScript.prototype, {
 			this._doScriptEnd();
 		}
         else if (typeof this._curAction.cmd == "function") {
-            Logger.trace("about to wait in function: " +(this._curAction.delay || 100));
+            Logger.trace("about to wait in function: " +(this._curAction.delay || 1));
             setTimeout(function() {
                 Logger && Logger.trace("$this._curAction.getPositionInScript() = " + $this._curAction.getPositionInScript())
                 $this.topScript.stack.push($this._curAction.getPositionInScript());
@@ -236,7 +236,7 @@ Object.extend(AScript.prototype, {
                 EventBus.dispatch("action/start",$this.topScript.stack[0],  {action : $this._curAction, stack : [].concat($this.topScript.stack)} );
                 if ($this._handleAbort($this._curAction)) return;
                 $this._curAction.start();
-            }, this._curAction.delay || this.topScript._runtimeData.delay || 100);
+            }, this._curAction.delay || this.topScript._runtimeData.delay || 1);
 		}
         else if(!this._curAction.cmd && this._curAction.comment){
             Logger.debug("Describe : " + this._curAction.comment);
@@ -247,7 +247,7 @@ Object.extend(AScript.prototype, {
 		}
         else {
             var topScriptDelay = this.topScript == this && this.getTopScriptParam("delay");
-            Logger.trace("about to wait in : " + this._curAction.cmd + " ---> time : " +  (this._curAction.delay || ($this._curIndex == 0 ? 0 : topScriptDelay || 100)));
+            Logger.trace("about to wait in : " + this._curAction.cmd + " ---> time : " +  (this._curAction.delay || ($this._curIndex == 0 ? 0 : topScriptDelay || 1)));
             setTimeout(function() {
                 $this.topScript.stack.push($this._curAction.getPositionInScript());
                 EventBus.dispatch("action/start", $this.topScript.stack[0], {action : $this._curAction, stack : [].concat($this.topScript.stack)});
@@ -255,7 +255,7 @@ Object.extend(AScript.prototype, {
 
                 $this._curAction.start();
                 // default delay (apart from top script delay) is 1000
-            }, this._curAction.delay || ($this._curIndex == 0 ? 0 : topScriptDelay || 100));
+            }, this._curAction.delay || ($this._curIndex == 0 ? 0 : topScriptDelay || 1));
 		}
 	},
 
@@ -499,7 +499,7 @@ Action.prototype = {
                         });
                         cb(res[0]);
                         // default findDelay (apart from top script default) is 200
-                    }, $this.findDelay || topScriptFindDelay || 200);
+                    }, $this.findDelay || topScriptFindDelay || 1);
                 } else if(res.flags) {
                     console.log("in ascript " + res.flags);
                     if(res.flags.error) {
