@@ -315,7 +315,7 @@ function setDataCollection(test,action, cmdNum){
     if(collectData){
         try{collectData.data.forEach(function(item){
             if(item.format.includes("rowData")) setFile(cmdNum + "-[error.image]-" + test.name + ".png", item.content);
-            else if(item.format.includes("png")) setFile(cmdNum + "-[error.image]-" + test.name + ".png", item.content.toDataURL());
+            else if(item.format.includes("png")) setFile(cmdNum + "-[error.image]-" + test.name + ".png", item.content);
             else setFile(item.name+".log", item.content);
         })}
         catch(ex){Logger.error("collectData : " + ex)}
