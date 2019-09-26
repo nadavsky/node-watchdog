@@ -231,16 +231,23 @@ TestMgr = module.exports = {
     
     printResults(){
         function printFile(fileName, data ){
-            function createFile(name, outputDir){
-                var snapshotFile = fs.openSync(fs.appendFileSync(outputDir, name).path);
-                if (snapshotFile.exists()) fs.unlink(snapshotFile);
-                return snapshotFile;
+            function createFile(name, outputDir, screenShotData){
+                var buff = new Buffer(screenShotData,'base64');
+                var stream = fs.createWriteStream(outputDir + '/'+ name);
+                stream.write(buff);
+                stream.on("end", function() {
+                    stream.end();
+                });
             }
-            var logFile = createFile(`${fileName}`, outputDir);
             if(Array.isArray(data)){
-                data.forEach(function(datapiece){fs.WriteStream(logFile, `${datapiece}` + "\n", "a");})
+                data.forEach(function(datapiece){
+                    createFile(`${fileName}`, outputDir,`${datapiece}` + "\n")
+                })
             }
-            else fs.WriteStream(logFile, data, logFile.exists() ? "a" : undefined, "utf8");
+            else {
+                createFile(`${fileName}`, outputDir, data )
+
+            }
         }
 
 
