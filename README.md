@@ -7,6 +7,14 @@ How to use:
 2. cd node-watchdog.
 3. node watchdog.js <path to test | path to tests folder | test url> <options>
 
+NOTE: config file is also supported (example) :
+./node-watchdog/config.json : 
+ {
+   "watchdog_requireUrl": "http://localhost/watchdog-components/",
+   "watchdog_path": "http://localhost/watchdog/test.js",
+   "watchdog_logLevel": "DEBUG",
+   "watchdog_logConsoleMode": true
+ }
 
 options:
 
